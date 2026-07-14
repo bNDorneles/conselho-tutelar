@@ -34,6 +34,10 @@ Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, c
 - `lib/utils.ts`: utilitario base do shadcn/ui.
 - `lib/supabase/`: helpers de configuracao e clientes Supabase para browser/server.
 
+## Identidade Visual
+
+A paleta aprovada usa fundo off-white quente, primaria verde/teal serena, secundaria azul suave e acento pessego discreto. A area publica deve parecer clara, tranquila e acolhedora para quem precisa realizar uma denuncia.
+
 ## Variaveis De Ambiente
 
 Copie `.env.local.example` para `.env.local` e preencha quando o projeto Supabase existir:
