@@ -296,7 +296,7 @@ Toda entrega deve:
 
 ## Estado Atual Do Projeto
 
-No momento, o repositorio tem a base Next.js inicial criada pela Issue #1 na branch `issue/01-nextjs-base`.
+No momento, o repositorio tem a base Next.js inicial criada pela Issue #1 e a fundacao visual shadcn/ui criada pela Issue #2.
 
 Ja existem:
 
@@ -306,12 +306,16 @@ Ja existem:
 - Backlog em `docs/github-issues.md`.
 - Issues abertas no GitHub.
 - Codigo inicial Next.js com TypeScript, ESLint, Tailwind CSS e App Router.
+- shadcn/ui configurado.
+- Pagina publica inicial em `/`.
+- Base visual administrativa em `/admin`.
 
 Ainda nao existem:
 
-- shadcn/ui configurado.
 - Projeto Supabase configurado.
 - Schema aplicado.
+- Autenticacao administrativa.
+- Formulario real de denuncia.
 - Deploy.
 
 ## Decisao Arquitetural Importante

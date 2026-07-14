@@ -6,7 +6,7 @@ Esta implementacao sera reconstruida do zero com Next.js, TypeScript, Supabase, 
 
 ## Estado Atual
 
-O projeto esta com a base Next.js inicial criada pela Issue #1.
+O projeto esta com a base Next.js inicial criada pela Issue #1 e a fundacao visual shadcn/ui criada pela Issue #2.
 
 Documentacao principal:
 
@@ -23,6 +23,13 @@ Documentacao principal:
 ## Objetivo
 
 Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, com denuncia anonima, painel privado, chamados, encaminhamentos, relatorios, auditoria e controles de seguranca.
+
+## Estrutura Inicial
+
+- `/`: base publica institucional.
+- `/admin`: base visual do painel administrativo, ainda sem autenticacao ou dados reais.
+- `components/ui/`: componentes shadcn/ui adicionados para a fundacao visual.
+- `lib/utils.ts`: utilitario base do shadcn/ui.
 
 ## Como Rodar Localmente
 
