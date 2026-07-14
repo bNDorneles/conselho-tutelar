@@ -81,13 +81,17 @@ Quando Supabase CLI e Docker estiverem disponiveis, aplique migrations e seed lo
 supabase db reset
 ```
 
-A Issue #4 cria apenas schema, constraints, indices e seeds seguros. RLS e policies ficam para a Issue #6.
+A Issue #4 cria schema, constraints, indices e seeds seguros. A Issue #6 versiona RLS e policies.
 
 ## Autenticacao Administrativa
 
 A area `/admin` exige sessao Supabase Auth e registro ativo em `profiles`.
 
 Usuarios devem ser criados no Supabase Auth e vinculados manualmente em `profiles` ate existir uma tela administrativa de gestao de conselheiros.
+
+## RLS E Policies
+
+A migration `20260714000200_enable_rls_policies.sql` habilita RLS nas tabelas publicas do sistema. A area publica pode inserir denuncias, mas nao pode ler denuncias, vitimas, chamados, encaminhamentos ou audit logs. Leitura administrativa depende de profile ativo em `profiles`.
 
 ## Observacoes De Dependencias
 

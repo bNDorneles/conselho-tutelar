@@ -128,5 +128,31 @@ Resultado:
 - Proxy de sessao Supabase criado para rotas administrativas.
 - Usuarios reais e service role ficaram fora desta issue.
 
+## Issue #6 - Configurar RLS e politicas de acesso
+
+Tipo da issue: security/database
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/06-rls-policies
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/seguranca-lgpd.md
+- docs/superpowers/specs/2026-07-14-auth-rls-design.md
+- docs/superpowers/plans/2026-07-14-issues-05-06-auth-rls.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Migration de RLS criada em `supabase/migrations/20260714000200_enable_rls_policies.sql`.
+- RLS habilitado nas tabelas publicas do sistema.
+- Insert anonimo em `denuncias` permitido apenas para denuncia recebida e sem observacoes internas.
+- Leitura publica de `denuncias`, `vitimas`, `chamados`, `encaminhamentos` e `audit_logs` nao foi criada.
+- Leitura administrativa depende de profile ativo via `public.is_active_conselheiro()`.
+- Manutencao de catalogos e dados institucionais depende de `public.is_active_admin()`.
+- Teste estatico criado em `supabase/rls.test.ts`.
+
 
 

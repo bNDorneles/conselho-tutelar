@@ -330,12 +330,12 @@ Ja existem:
 - Tela `/login`.
 - Protecao server-side inicial de `/admin`.
 - Server Actions de login/logout.
+- Migration de RLS e policies em `supabase/migrations/20260714000200_enable_rls_policies.sql`.
 
 Ainda nao existem:
 
 - Projeto Supabase real conectado com credenciais locais.
 - Schema aplicado em ambiente Supabase local/remoto.
-- Row Level Security e policies.
 - Formulario real de denuncia.
 - Deploy.
 
