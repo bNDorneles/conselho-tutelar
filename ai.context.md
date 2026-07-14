@@ -220,6 +220,36 @@ Evite:
 
 Nao tente implementar tudo de uma vez. Siga as GitHub Issues.
 
+## Fluxo De Branches E Modelos
+
+Antes de iniciar implementacao, leia tambem:
+
+- `docs/superpowers/specs/2026-07-14-fluxo-branches-modelos-design.md`
+
+Use este padrao de branches:
+
+- `main`: branch estavel/publicavel.
+- `develop`: branch de integracao.
+- `issue/<numero>-<slug>`: branch de uma unica issue, sempre criada a partir de `develop`.
+
+Antes de alterar codigo em qualquer issue, registre:
+
+```text
+Tipo da issue:
+Modelo recomendado:
+Branch base:
+Branch da issue:
+Arquivos/documentos lidos:
+Comandos de verificacao esperados:
+```
+
+Politica de modelos:
+
+- `gpt-5.6-sol`: banco, Supabase, RLS, auth, backend critico, auditoria, LGPD e arquitetura.
+- `gpt-5.5`: tarefas fullstack, regras de negocio, debugging pesado e integracoes.
+- `gpt-5.6-terra`: frontend, shadcn/ui, layouts, dashboards visuais e documentacao tecnica media.
+- `gpt-5.6-luna`: ajustes pequenos, texto, limpeza e tarefas mecanicas de baixo risco.
+
 Ordem recomendada:
 
 1. Issue #1 - Inicializar projeto Next.js com TypeScript.
@@ -289,4 +319,3 @@ Se houver duvida entre adaptar algo do PHP antigo ou criar limpo, escolha criar 
 Se houver duvida entre facilidade e seguranca, escolha seguranca.
 
 Se houver duvida entre entregar tudo ou entregar uma fatia pequena funcional, escolha a fatia pequena funcional.
-

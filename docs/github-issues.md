@@ -2,9 +2,39 @@
 
 Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada item em uma GitHub Issue para trabalharmos por etapas, evitando implementar tudo em uma unica conversa.
 
+## Pre-Requisito Obrigatorio Para Todas As Issues
+
+Antes de implementar qualquer issue, registrar:
+
+```text
+Tipo da issue:
+Modelo recomendado:
+Branch base:
+Branch da issue:
+Arquivos/documentos lidos:
+Comandos de verificacao esperados:
+```
+
+Padrao de branches:
+
+- `main`: branch estavel/publicavel.
+- `develop`: branch de integracao.
+- `issue/<numero>-<slug>`: branch de uma unica issue, criada a partir de `develop`.
+
+Politica de modelos:
+
+- `gpt-5.6-sol`: banco, Supabase, RLS, auth, backend critico, auditoria, LGPD e arquitetura.
+- `gpt-5.5`: tarefas fullstack, regras de negocio, debugging pesado e integracoes.
+- `gpt-5.6-terra`: frontend, shadcn/ui, layouts, dashboards visuais e documentacao tecnica media.
+- `gpt-5.6-luna`: ajustes pequenos, texto, limpeza e tarefas mecanicas de baixo risco.
+
 ## Milestone 1 - Fundacao Do Projeto
 
 ### Issue 1 - Inicializar projeto Next.js com TypeScript
+
+**Tipo:** fundacao/frontend
+
+**Modelo recomendado:** `gpt-5.6-terra`
 
 **Objetivo:** Criar a base da aplicacao moderna.
 
@@ -25,6 +55,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 
 ### Issue 2 - Configurar shadcn/ui e identidade visual base
 
+**Tipo:** frontend/ui
+
+**Modelo recomendado:** `gpt-5.6-terra`
+
 **Objetivo:** Preparar uma interface moderna, institucional e consistente.
 
 **Escopo:**
@@ -41,6 +75,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Interface tem visual serio, limpo e acolhedor.
 
 ### Issue 3 - Configurar Supabase no projeto
+
+**Tipo:** backend/integracao
+
+**Modelo recomendado:** `gpt-5.6-sol`
 
 **Objetivo:** Conectar a aplicacao ao Supabase.
 
@@ -60,6 +98,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 
 ### Issue 4 - Criar schema inicial do banco no Supabase
 
+**Tipo:** database/security
+
+**Modelo recomendado:** `gpt-5.6-sol`
+
 **Objetivo:** Criar modelo relacional inicial.
 
 **Escopo:**
@@ -75,6 +117,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Tabelas refletem o fluxo denuncia -> chamado -> encaminhamento.
 
 ### Issue 5 - Configurar autenticação administrativa
+
+**Tipo:** auth/security
+
+**Modelo recomendado:** `gpt-5.6-sol`
 
 **Objetivo:** Permitir login seguro de conselheiros/admins.
 
@@ -92,6 +138,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Logout funciona.
 
 ### Issue 6 - Configurar RLS e politicas de acesso
+
+**Tipo:** security/database
+
+**Modelo recomendado:** `gpt-5.6-sol`
 
 **Objetivo:** Proteger dados sensiveis.
 
@@ -112,6 +162,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 
 ### Issue 7 - Criar site publico institucional
 
+**Tipo:** frontend/content
+
+**Modelo recomendado:** `gpt-5.6-terra`
+
 **Objetivo:** Criar primeira experiencia publica do sistema.
 
 **Escopo:**
@@ -129,6 +183,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Sem placeholders visiveis.
 
 ### Issue 8 - Criar formulario de denuncia anonima
+
+**Tipo:** fullstack/security
+
+**Modelo recomendado:** `gpt-5.5`
 
 **Objetivo:** Permitir envio seguro de denuncia anonima.
 
@@ -149,6 +207,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 
 ### Issue 9 - Criar dashboard administrativo inicial
 
+**Tipo:** fullstack/ui
+
+**Modelo recomendado:** `gpt-5.5`
+
 **Objetivo:** Dar visao geral para conselheiros.
 
 **Escopo:**
@@ -163,6 +225,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Tela exige login.
 
 ### Issue 10 - Implementar listagem e detalhe de denuncias
+
+**Tipo:** fullstack/security
+
+**Modelo recomendado:** `gpt-5.5`
 
 **Objetivo:** Permitir triagem administrativa.
 
@@ -179,6 +245,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Acesso gera log de auditoria.
 
 ### Issue 11 - Criar chamado a partir de denuncia
+
+**Tipo:** fullstack/business
+
+**Modelo recomendado:** `gpt-5.5`
 
 **Objetivo:** Formalizar atendimento a partir da denuncia.
 
@@ -200,6 +270,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 
 ### Issue 12 - Implementar tela de chamados
 
+**Tipo:** fullstack/ui
+
+**Modelo recomendado:** `gpt-5.5`
+
 **Objetivo:** Acompanhar casos em andamento.
 
 **Escopo:**
@@ -215,6 +289,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Status muda com validacao.
 
 ### Issue 13 - Implementar encaminhamentos e medidas protetivas
+
+**Tipo:** fullstack/business
+
+**Modelo recomendado:** `gpt-5.5`
 
 **Objetivo:** Registrar acoes tomadas em cada chamado.
 
@@ -232,6 +310,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Acoes geram auditoria.
 
 ### Issue 14 - Implementar cadastros auxiliares
+
+**Tipo:** fullstack/admin
+
+**Modelo recomendado:** `gpt-5.5`
 
 **Objetivo:** Permitir manutencao dos dados de apoio.
 
@@ -251,6 +333,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 
 ### Issue 15 - Implementar relatorios basicos
 
+**Tipo:** fullstack/reporting
+
+**Modelo recomendado:** `gpt-5.5`
+
 **Objetivo:** Dar visao gerencial do atendimento.
 
 **Escopo:**
@@ -267,6 +353,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Filtros por periodo funcionam.
 
 ### Issue 16 - Preparar deploy na Vercel
+
+**Tipo:** deploy/config
+
+**Modelo recomendado:** `gpt-5.6-sol`
 
 **Objetivo:** Colocar aplicacao no ar.
 
@@ -285,6 +375,10 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 
 ### Issue 17 - Revisao final de seguranca e LGPD
 
+**Tipo:** security/lgpd
+
+**Modelo recomendado:** `gpt-5.6-sol`
+
 **Objetivo:** Fazer checagem final antes de uso real.
 
 **Escopo:**
@@ -300,4 +394,3 @@ Este arquivo define as tarefas pequenas do projeto. A ideia e transformar cada i
 - Nenhuma rota publica lista dados sensiveis.
 - Politicas de acesso foram testadas.
 - Documentacao de seguranca esta atualizada.
-
