@@ -29,7 +29,8 @@ Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, c
 ## Estrutura Inicial
 
 - `/`: base publica institucional.
-- `/admin`: base visual do painel administrativo, ainda sem autenticacao ou dados reais.
+- `/login`: acesso administrativo via Supabase Auth.
+- `/admin`: painel administrativo protegido por login e profile ativo.
 - `components/ui/`: componentes shadcn/ui adicionados para a fundacao visual.
 - `lib/utils.ts`: utilitario base do shadcn/ui.
 - `lib/supabase/`: helpers de configuracao e clientes Supabase para browser/server.
@@ -81,6 +82,12 @@ supabase db reset
 ```
 
 A Issue #4 cria apenas schema, constraints, indices e seeds seguros. RLS e policies ficam para a Issue #6.
+
+## Autenticacao Administrativa
+
+A area `/admin` exige sessao Supabase Auth e registro ativo em `profiles`.
+
+Usuarios devem ser criados no Supabase Auth e vinculados manualmente em `profiles` ate existir uma tela administrativa de gestao de conselheiros.
 
 ## Observacoes De Dependencias
 

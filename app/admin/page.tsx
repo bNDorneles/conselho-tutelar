@@ -7,6 +7,7 @@ import {
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,6 +15,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { requireAdminProfile } from "@/lib/auth/admin";
+import { signOutAction } from "@/lib/auth/actions";
+
+export const dynamic = "force-dynamic";
 
 const adminCards = [
   {
@@ -33,7 +38,9 @@ const adminCards = [
   },
 ];
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const profile = await requireAdminProfile();
+
   return (
     <main className="min-h-screen bg-background">
       <header className="border-b bg-card">
@@ -41,9 +48,16 @@ export default function AdminPage() {
           <Link href="/" className="text-sm font-semibold">
             Conselho Tutelar
           </Link>
-          <Badge variant="outline" className="rounded-lg">
-            Base administrativa
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
+              {profile.role}
+            </Badge>
+            <form action={signOutAction}>
+              <Button type="submit" variant="outline" size="sm">
+                Sair
+              </Button>
+            </form>
+          </div>
         </div>
       </header>
 
@@ -53,11 +67,11 @@ export default function AdminPage() {
             Painel privado
           </Badge>
           <h1 className="text-3xl font-semibold leading-tight">
-            Estrutura inicial do painel administrativo.
+            Painel administrativo.
           </h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            Esta tela define o padrao visual do painel. Login, permissoes e
-            dados reais entram nas issues de autenticacao, Supabase e RLS.
+            Ola, {profile.nome}. Esta area e restrita a conselheiros e
+            administradores ativos.
           </p>
         </div>
 

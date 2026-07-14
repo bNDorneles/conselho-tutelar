@@ -104,4 +104,29 @@ Resultado:
 - Teste estatico do schema criado em `supabase/schema.test.ts`.
 - `supabase db reset` nao foi executado porque Supabase CLI nao esta instalado neste ambiente.
 
+## Issue #5 - Configurar autenticacao administrativa
+
+Tipo da issue: auth/security
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/05-admin-auth
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/seguranca-lgpd.md
+- docs/superpowers/specs/2026-07-14-auth-rls-design.md
+- docs/superpowers/plans/2026-07-14-issues-05-06-auth-rls.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `/login` criado.
+- Server Actions de login e logout criadas.
+- `/admin` protegido por profile ativo.
+- Proxy de sessao Supabase criado para rotas administrativas.
+- Usuarios reais e service role ficaram fora desta issue.
+
+
 
