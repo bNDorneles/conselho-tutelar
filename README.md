@@ -6,7 +6,7 @@ Esta implementacao sera reconstruida do zero com Next.js, TypeScript, Supabase, 
 
 ## Estado Atual
 
-O projeto esta com a base Next.js inicial criada pela Issue #1 e a fundacao visual shadcn/ui criada pela Issue #2.
+O projeto esta com a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2 e os helpers Supabase criados pela Issue #3.
 
 Documentacao principal:
 
@@ -16,7 +16,9 @@ Documentacao principal:
 - `docs/seguranca-lgpd.md`
 - `docs/superpowers/specs/2026-07-14-modernizacao-tcc-conselho-tutelar-design.md`
 - `docs/superpowers/specs/2026-07-14-fluxo-branches-modelos-design.md`
+- `docs/superpowers/specs/2026-07-14-supabase-config-design.md`
 - `docs/superpowers/plans/2026-07-14-issues-01-02-base-next-ui.md`
+- `docs/superpowers/plans/2026-07-14-issue-03-supabase-config.md`
 - `docs/github-issues.md`
 - `docs/issue-execution-log.md`
 
@@ -30,6 +32,22 @@ Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, c
 - `/admin`: base visual do painel administrativo, ainda sem autenticacao ou dados reais.
 - `components/ui/`: componentes shadcn/ui adicionados para a fundacao visual.
 - `lib/utils.ts`: utilitario base do shadcn/ui.
+- `lib/supabase/`: helpers de configuracao e clientes Supabase para browser/server.
+
+## Variaveis De Ambiente
+
+Copie `.env.local.example` para `.env.local` e preencha quando o projeto Supabase existir:
+
+```powershell
+Copy-Item .env.local.example .env.local
+```
+
+```text
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+```
+
+Nao coloque service role key, tokens privados ou credenciais reais em arquivos versionados.
 
 ## Como Rodar Localmente
 
@@ -43,6 +61,7 @@ Abra `http://localhost:3000`.
 ## Verificacoes
 
 ```powershell
+npm run test
 npm run lint
 npm run build
 ```
