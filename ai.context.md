@@ -307,7 +307,7 @@ Toda entrega deve:
 
 ## Estado Atual Do Projeto
 
-No momento, o repositorio tem a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2 e a configuracao inicial Supabase criada pela Issue #3.
+No momento, o repositorio tem a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2, a configuracao inicial Supabase criada pela Issue #3 e o schema inicial Supabase criado pela Issue #4.
 
 Ja existem:
 
@@ -324,11 +324,15 @@ Ja existem:
 - Helpers Supabase em `lib/supabase/`.
 - `.env.local.example` com variaveis publicas do Supabase.
 - Testes Vitest para validacao da configuracao Supabase.
+- Migration inicial em `supabase/migrations/20260714000100_create_initial_schema.sql`.
+- Seed seguro em `supabase/seed.sql`.
+- Tipos iniciais do banco em `lib/supabase/database.types.ts`.
 
 Ainda nao existem:
 
 - Projeto Supabase real conectado com credenciais locais.
-- Schema aplicado.
+- Schema aplicado em ambiente Supabase local/remoto.
+- Row Level Security e policies.
 - Autenticacao administrativa.
 - Formulario real de denuncia.
 - Deploy.
