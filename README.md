@@ -6,7 +6,7 @@ Esta implementacao sera reconstruida do zero com Next.js, TypeScript, Supabase, 
 
 ## Estado Atual
 
-O projeto esta com a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2 e os helpers Supabase criados pela Issue #3.
+O projeto esta com a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2, os helpers Supabase criados pela Issue #3 e o schema inicial versionado pela Issue #4.
 
 Documentacao principal:
 
@@ -33,6 +33,8 @@ Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, c
 - `components/ui/`: componentes shadcn/ui adicionados para a fundacao visual.
 - `lib/utils.ts`: utilitario base do shadcn/ui.
 - `lib/supabase/`: helpers de configuracao e clientes Supabase para browser/server.
+- `supabase/migrations/`: migrations SQL versionadas.
+- `supabase/seed.sql`: seeds seguros de catalogos e dados institucionais genericos.
 
 ## Identidade Visual
 
@@ -69,6 +71,16 @@ npm run test
 npm run lint
 npm run build
 ```
+
+## Banco Local Supabase
+
+Quando Supabase CLI e Docker estiverem disponiveis, aplique migrations e seed localmente com:
+
+```powershell
+supabase db reset
+```
+
+A Issue #4 cria apenas schema, constraints, indices e seeds seguros. RLS e policies ficam para a Issue #6.
 
 ## Observacoes De Dependencias
 

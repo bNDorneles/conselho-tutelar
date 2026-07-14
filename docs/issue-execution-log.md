@@ -76,3 +76,32 @@ Resultado:
 - Build nao exige projeto Supabase real.
 - `npm install` manteve 2 vulnerabilidades moderadas em dependencias transitivas; nao foi usado `npm audit fix --force` para evitar mudanca quebravel fora do escopo.
 
+## Issue #4 - Criar schema inicial do banco no Supabase
+
+Tipo da issue: database/security
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/04-initial-supabase-schema
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/decisao-arquitetura.md
+- docs/seguranca-lgpd.md
+- docs/superpowers/specs/2026-07-14-schema-inicial-supabase-design.md
+- docs/superpowers/plans/2026-07-14-issue-04-initial-supabase-schema.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Migration criada em `supabase/migrations/20260714000100_create_initial_schema.sql`.
+- Seed criado em `supabase/seed.sql`.
+- Tabelas criadas no SQL: profiles, conselho_tutelar, motivos_denuncia, denuncias, vitimas, chamados, medidas_protetivas, encaminhamentos e audit_logs.
+- Enums criados no SQL: profile_role, denuncia_status, chamado_status e audit_action.
+- RLS e policies ficaram fora desta issue, conforme planejado para a Issue #6.
+- Tipos iniciais atualizados em `lib/supabase/database.types.ts`.
+- Teste estatico do schema criado em `supabase/schema.test.ts`.
+- `supabase db reset` nao foi executado porque Supabase CLI nao esta instalado neste ambiente.
+
+
