@@ -327,13 +327,15 @@ Ja existem:
 - Migration inicial em `supabase/migrations/20260714000100_create_initial_schema.sql`.
 - Seed seguro em `supabase/seed.sql`.
 - Tipos iniciais do banco em `lib/supabase/database.types.ts`.
+- Tela `/login`.
+- Protecao server-side inicial de `/admin`.
+- Server Actions de login/logout.
 
 Ainda nao existem:
 
 - Projeto Supabase real conectado com credenciais locais.
 - Schema aplicado em ambiente Supabase local/remoto.
 - Row Level Security e policies.
-- Autenticacao administrativa.
 - Formulario real de denuncia.
 - Deploy.
 
