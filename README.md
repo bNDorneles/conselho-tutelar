@@ -19,4 +19,3 @@ Documentacao inicial:
 ## Objetivo
 
 Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, com denuncia anonima, painel privado, chamados, encaminhamentos, relatorios, auditoria e controles de seguranca.
-
