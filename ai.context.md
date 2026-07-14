@@ -296,18 +296,20 @@ Toda entrega deve:
 
 ## Estado Atual Do Projeto
 
-No momento, o repositorio esta em fase de planejamento/documentacao. O projeto Next.js ainda sera inicializado pela Issue #1.
+No momento, o repositorio tem a base Next.js inicial criada pela Issue #1 na branch `issue/01-nextjs-base`.
 
 Ja existem:
 
 - Documentos de contexto.
 - Especificacao inicial.
+- Plano das Issues #1 e #2.
 - Backlog em `docs/github-issues.md`.
 - Issues abertas no GitHub.
+- Codigo inicial Next.js com TypeScript, ESLint, Tailwind CSS e App Router.
 
 Ainda nao existem:
 
-- Codigo Next.js.
+- shadcn/ui configurado.
 - Projeto Supabase configurado.
 - Schema aplicado.
 - Deploy.
