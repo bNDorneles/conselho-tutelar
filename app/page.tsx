@@ -81,9 +81,9 @@ export default function Home() {
           <div className="flex flex-col justify-center">
             <Badge
               variant="outline"
-              className="mb-5 w-fit rounded-lg border-primary/25 bg-primary/5 text-primary"
+              className="mb-5 w-fit rounded-lg border-primary/20 bg-primary/8 text-primary"
             >
-              Base moderna do TCC
+              Canal seguro e acolhedor
             </Badge>
             <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-foreground sm:text-5xl">
               Sistema de denuncias anonimas para o Conselho Tutelar.
@@ -109,7 +109,7 @@ export default function Home() {
             </div>
           </div>
 
-          <Card className="rounded-lg border-primary/15 bg-card shadow-sm">
+          <Card className="rounded-lg border-primary/15 bg-card shadow-sm shadow-primary/5">
             <CardHeader>
               <CardTitle>Fluxo protegido desde a entrada</CardTitle>
               <CardDescription>
@@ -122,7 +122,7 @@ export default function Home() {
                 {statusItems.map((item, index) => (
                   <div
                     key={item}
-                    className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2"
+                    className="flex items-center gap-3 rounded-lg border bg-muted/45 px-3 py-2"
                   >
                     <span className="flex size-7 items-center justify-center rounded-md bg-secondary text-xs font-semibold text-secondary-foreground">
                       {index + 1}
@@ -171,7 +171,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="fluxo" className="border-y bg-card">
+      <section id="fluxo" className="border-y bg-secondary/35">
         <div className="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <Badge variant="secondary" className="mb-4 rounded-lg">
@@ -191,7 +191,7 @@ export default function Home() {
               "Triagem por conselheiro",
               "Auditoria de acoes sensiveis",
             ].map((item) => (
-              <div key={item} className="rounded-lg border bg-background p-4">
+              <div key={item} className="rounded-lg border bg-card p-4">
                 <p className="text-sm font-medium">{item}</p>
               </div>
             ))}

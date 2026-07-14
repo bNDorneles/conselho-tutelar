@@ -199,6 +199,17 @@ A interface deve ser:
 - Responsiva.
 - Diferente de template Bootstrap generico.
 
+Paleta aprovada:
+
+- Fundo claro/off-white quente.
+- Primaria verde/teal serena.
+- Secundaria azul suave.
+- Acento pessego/amarelo discreto.
+- Texto cinza-azulado escuro.
+- Experiencia publica prioritariamente clara, tranquila e nao intimidante.
+
+Evite dark mode como experiencia principal da area publica neste momento.
+
 Use componentes como:
 
 - Cards de indicadores.
