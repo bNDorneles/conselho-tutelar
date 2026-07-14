@@ -10,6 +10,7 @@ O projeto esta na fase de especificacao e planejamento.
 
 Documentacao inicial:
 
+- `ai.context.md`
 - `docs/contexto-tcc-2023.md`
 - `docs/decisao-arquitetura.md`
 - `docs/seguranca-lgpd.md`
