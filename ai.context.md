@@ -296,23 +296,27 @@ Toda entrega deve:
 
 ## Estado Atual Do Projeto
 
-No momento, o repositorio tem a base Next.js inicial criada pela Issue #1 e a fundacao visual shadcn/ui criada pela Issue #2.
+No momento, o repositorio tem a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2 e a configuracao inicial Supabase criada pela Issue #3.
 
 Ja existem:
 
 - Documentos de contexto.
 - Especificacao inicial.
 - Plano das Issues #1 e #2.
+- Plano da Issue #3.
 - Backlog em `docs/github-issues.md`.
 - Issues abertas no GitHub.
 - Codigo inicial Next.js com TypeScript, ESLint, Tailwind CSS e App Router.
 - shadcn/ui configurado.
 - Pagina publica inicial em `/`.
 - Base visual administrativa em `/admin`.
+- Helpers Supabase em `lib/supabase/`.
+- `.env.local.example` com variaveis publicas do Supabase.
+- Testes Vitest para validacao da configuracao Supabase.
 
 Ainda nao existem:
 
-- Projeto Supabase configurado.
+- Projeto Supabase real conectado com credenciais locais.
 - Schema aplicado.
 - Autenticacao administrativa.
 - Formulario real de denuncia.
