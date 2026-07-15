@@ -76,7 +76,10 @@ export function denunciaHasVictimaInfo(denuncia: AdminDenuncia) {
   return Boolean(
     denuncia.vitima_nome_informado?.trim() ||
       denuncia.vitima_idade_informada !== null ||
-      denuncia.vitima_endereco_informado?.trim()
+      denuncia.vitima_endereco_informado?.trim() ||
+      denuncia.vitima_escola_informada?.trim() ||
+      denuncia.vitima_nome_mae_informado?.trim() ||
+      denuncia.vitima_nome_pai_informado?.trim()
   );
 }
 
@@ -85,6 +88,9 @@ export function buildVitimaInsert(denuncia: AdminDenuncia): VitimaInsert {
     nome: denuncia.vitima_nome_informado,
     idade_estimada: denuncia.vitima_idade_informada,
     endereco: denuncia.vitima_endereco_informado,
+    escola: denuncia.vitima_escola_informada,
+    responsavel_nome:
+      denuncia.vitima_nome_mae_informado ?? denuncia.vitima_nome_pai_informado,
     observacoes: `Criada a partir da denuncia ${denuncia.id}.`,
   };
 }
@@ -109,7 +115,7 @@ export function buildChamadoInsert({
 }
 
 export function canCreateChamadoFromDenuncia(denuncia: AdminDenuncia) {
-  return denuncia.status !== "convertida_em_chamado";
+  return denuncia.status === "em_analise";
 }
 
 export function canTransitionChamadoStatus(
@@ -213,7 +219,7 @@ export async function createChamadoFromDenunciaAction(formData: FormData) {
     .insert(
       buildChamadoInsert({
         denuncia,
-        conselheiroId: profile.id,
+    conselheiroId: denuncia.conselheiro_responsavel_id ?? profile.id,
         vitimaId,
       })
     )
