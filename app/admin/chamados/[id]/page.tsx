@@ -4,6 +4,7 @@ import { ArrowLeft, ClipboardList } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { OperationalTimeline } from "@/components/admin/operational-timeline";
 import {
   Card,
   CardContent,
@@ -22,6 +23,8 @@ import {
   type ChamadoStatus,
 } from "@/lib/admin/chamados";
 import { formatDashboardDate } from "@/lib/admin/dashboard";
+import type { OperationalStage } from "@/lib/admin/operational-flow";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 import {
   applyMedidaProtetivaAction,
   createEncaminhamentoAction,
@@ -84,14 +87,26 @@ export default async function ChamadoDetailPage({
   }
 
   await recordChamadoRead(profile.id, chamado.id);
+  const areaAccent = getAreaAccent("chamados");
+  const currentStage: OperationalStage =
+    chamado.status === "finalizado"
+      ? "finalizado"
+      : encaminhamentos.length > 0
+        ? "encaminhamento"
+        : medidasAplicadas.length > 0
+          ? "medida_aplicada"
+          : "chamado_aberto";
 
   return (
     <main className="min-h-screen bg-background">
       <section className="mx-auto w-full max-w-5xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Detalhe do chamado
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
               {chamado.titulo}
@@ -107,6 +122,10 @@ export default async function ChamadoDetailPage({
             <ArrowLeft className="size-4" aria-hidden="true" />
             Voltar aos chamados
           </Link>
+        </div>
+
+        <div className="mb-5">
+          <OperationalTimeline currentStage={currentStage} />
         </div>
 
         {query?.success === "status_atualizado" ? (

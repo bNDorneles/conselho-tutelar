@@ -29,6 +29,7 @@ import {
   type DenunciaStatus,
 } from "@/lib/admin/denuncias";
 import type { OperationalStage } from "@/lib/admin/operational-flow";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 
 export const dynamic = "force-dynamic";
 
@@ -70,21 +71,25 @@ export default async function AdminDenunciasPage({
   ]);
   const groups = buildOperationalStageGroups(denuncias);
   const errorMessage = getErrorMessage(params.error);
+  const areaAccent = getAreaAccent("denuncias");
 
   return (
     <main className="min-h-screen bg-background">
       <section className="mx-auto w-full max-w-7xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Triagem
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
-              Denuncias recebidas.
+              Fluxo operacional de denuncias.
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Organize relatos anonimos por status e abra detalhes para
-              analisar com auditoria de acesso.
+              Acompanhe cada relato desde a chegada ate a finalizacao do
+              atendimento vinculado.
             </p>
           </div>
           <Link

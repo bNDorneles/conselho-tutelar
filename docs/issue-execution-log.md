@@ -508,3 +508,21 @@ Resultado:
 - Cards convertidos em chamado aparecem na etapa operacional correta sem voltar para analise.
 - Detalhe do chamado passou a mostrar etapa operacional da denuncia vinculada, evitando exibir `em_analise` quando o atendimento ja foi finalizado.
 - Testes adicionados para fluxo operacional, agrupamento derivado e exibicao de chamado finalizado.
+
+## Issue #27 - Acessibilidade visual e identidade das telas
+
+Tipo da issue: frontend/ux
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/27-identidade-visual-fluxos
+Comandos de verificacao executados:
+- npm.cmd run test -- lib/admin/visual-status.test.ts lib/admin/operational-flow.test.ts
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Helper visual criado para acentos de area e tons semanticos de status.
+- Kanban recebeu descricoes por etapa, contadores coloridos e badges por etapa operacional.
+- Telas de detalhe de denuncia e chamado receberam trilha visual do fluxo de atendimento.
+- Cabecalhos de Denuncias, Chamados, Cadastros e Relatorios passaram a ter acentos visuais distintos.
+- Testes adicionados para proteger mapeamento de areas, tons e classes de status.

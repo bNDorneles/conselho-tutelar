@@ -4,6 +4,7 @@ import { ArrowLeft, Eye } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { OperationalTimeline } from "@/components/admin/operational-timeline";
 import {
   Card,
   CardContent,
@@ -24,6 +25,8 @@ import {
   getConselheiroOptions,
 } from "@/lib/admin/chamados";
 import { formatDashboardDate } from "@/lib/admin/dashboard";
+import { getDenunciaOperationalStage } from "@/lib/admin/operational-flow";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 
 export const dynamic = "force-dynamic";
 
@@ -74,14 +77,19 @@ export default async function DenunciaDetailPage({
   const canCreateChamado = canCreateChamadoFromDenuncia(denuncia);
   const showSuccess = query?.success === "chamado_criado";
   const showError = Boolean(query?.error);
+  const areaAccent = getAreaAccent("denuncias");
+  const currentStage = getDenunciaOperationalStage(denuncia);
 
   return (
     <main className="min-h-screen bg-background">
       <section className="mx-auto w-full max-w-5xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Detalhe da denuncia
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
               Analise do relato.
@@ -98,6 +106,10 @@ export default async function DenunciaDetailPage({
             <ArrowLeft className="size-4" aria-hidden="true" />
             Voltar ao Kanban
           </Link>
+        </div>
+
+        <div className="mb-5">
+          <OperationalTimeline currentStage={currentStage} />
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">

@@ -32,6 +32,17 @@ export const operationalStageLabels: Record<OperationalStage, string> = {
   arquivada: "Arquivada",
 };
 
+export const operationalStageDescriptions: Record<OperationalStage, string> = {
+  recebida: "Relato novo aguardando triagem inicial.",
+  atribuida: "Relato ja direcionado para um conselheiro.",
+  em_analise: "Conselheiro avaliando procedencia e dados.",
+  chamado_aberto: "Atendimento formalizado a partir da denuncia.",
+  medida_aplicada: "Chamado com medida protetiva registrada.",
+  encaminhamento: "Atendimento encaminhado ou relatado.",
+  finalizado: "Chamado encerrado no sistema.",
+  arquivada: "Denuncia encerrada sem abertura de chamado.",
+};
+
 export function getDenunciaOperationalStage(
   denuncia: AdminDenuncia,
 ): OperationalStage {

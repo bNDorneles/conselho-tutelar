@@ -20,6 +20,7 @@ import {
   updateConselhoAction,
   upsertConselheiroAction,
 } from "@/lib/admin/cadastros";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 
 export const dynamic = "force-dynamic";
 
@@ -47,14 +48,18 @@ function ToggleForm({
 export default async function CadastrosPage() {
   await requireActiveAdminProfile();
   const { motivos, medidas, profiles, conselho } = await getAdminCadastrosData();
+  const areaAccent = getAreaAccent("cadastros");
 
   return (
     <main className="min-h-screen bg-background">
       <section className="mx-auto w-full max-w-6xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Cadastros auxiliares
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
               Manutencoes administrativas.

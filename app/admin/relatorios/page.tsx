@@ -19,6 +19,7 @@ import {
   parseReportFilters,
   type CountItem,
 } from "@/lib/admin/relatorios";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 
 export const dynamic = "force-dynamic";
 
@@ -76,6 +77,7 @@ export default async function RelatoriosPage({
   const params = (await searchParams) ?? {};
   const filters = parseReportFilters(params);
   const data = await getAdminReportsData(filters);
+  const areaAccent = getAreaAccent("relatorios");
   const cards = [
     {
       title: "Denuncias",
@@ -99,8 +101,11 @@ export default async function RelatoriosPage({
       <section className="mx-auto w-full max-w-6xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Relatorios
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
               Visao gerencial.

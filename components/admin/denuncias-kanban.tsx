@@ -25,10 +25,15 @@ import {
 import type { AdminDenuncia } from "@/lib/admin/denuncia-types";
 import {
   getDenunciaOperationalStage,
+  operationalStageDescriptions,
   operationalStageColumns,
   operationalStageLabels,
   type OperationalStage,
 } from "@/lib/admin/operational-flow";
+import {
+  getOperationalStageTone,
+  getStatusToneClass,
+} from "@/lib/admin/visual-status";
 
 type StatusGroups = Record<OperationalStage, AdminDenuncia[]>;
 
@@ -67,7 +72,7 @@ function DroppableColumn({
     <section
       ref={setNodeRef}
       className={`min-h-64 rounded-lg border bg-card transition-colors ${
-        isOver ? "border-primary bg-secondary/45" : ""
+        isOver ? "border-primary bg-primary/5" : ""
       }`}
     >
       {children}
@@ -145,13 +150,21 @@ export function DenunciasKanban({
       <div className="grid gap-4 xl:grid-cols-4 2xl:grid-cols-8">
         {operationalStageColumns.map((status) => (
           <DroppableColumn key={status} status={status}>
-            <div className="flex items-center justify-between border-b px-4 py-3">
-              <h2 className="text-sm font-semibold">
-                {operationalStageLabels[status]}
-              </h2>
-              <Badge variant="secondary" className="rounded-lg">
-                {groups[status].length}
-              </Badge>
+            <div className="space-y-2 border-b px-4 py-3">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-sm font-semibold">
+                  {operationalStageLabels[status]}
+                </h2>
+                <Badge
+                  variant="outline"
+                  className={getStatusToneClass(getOperationalStageTone(status))}
+                >
+                  {groups[status].length}
+                </Badge>
+              </div>
+              <p className="min-h-8 text-xs leading-4 text-muted-foreground">
+                {operationalStageDescriptions[status]}
+              </p>
             </div>
             <div className="space-y-3 p-3">
               {groups[status].length > 0 ? (
@@ -175,7 +188,13 @@ export function DenunciasKanban({
                           {denuncia.profiles?.nome ?? "Nao atribuido"}
                         </p>
                           {denuncia.chamados?.[0] ? (
-                            <p className="text-xs font-medium text-primary">
+                            <p
+                              className={`w-fit rounded-lg border px-2 py-1 text-xs font-medium ${getStatusToneClass(
+                                getOperationalStageTone(
+                                  getDenunciaOperationalStage(denuncia),
+                                ),
+                              )}`}
+                            >
                               {operationalStageLabels[
                                 getDenunciaOperationalStage(denuncia)
                               ]}
