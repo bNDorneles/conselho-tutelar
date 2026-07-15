@@ -80,6 +80,17 @@ npm run lint
 npm run build
 ```
 
+## Deploy Na Vercel
+
+O deploy recomendado usa GitHub + Vercel. Configure no painel da Vercel:
+
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+```
+
+Nao configure service role key no projeto Vercel. Veja o passo a passo completo em `docs/deploy-vercel.md`.
+
 ## Banco Local Supabase
 
 Quando Supabase CLI e Docker estiverem disponiveis, aplique migrations e seed localmente com:
