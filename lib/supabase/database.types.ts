@@ -15,6 +15,8 @@ export type Database = {
           nome: string;
           email: string | null;
           telefone: string | null;
+          telefone_fixo: string | null;
+          telefone_plantao: string | null;
           cargo: string | null;
           foto_url: string | null;
           sobre: string | null;
@@ -30,6 +32,8 @@ export type Database = {
           nome: string;
           email?: string | null;
           telefone?: string | null;
+          telefone_fixo?: string | null;
+          telefone_plantao?: string | null;
           cargo?: string | null;
           foto_url?: string | null;
           sobre?: string | null;
@@ -45,6 +49,8 @@ export type Database = {
           nome?: string;
           email?: string | null;
           telefone?: string | null;
+          telefone_fixo?: string | null;
+          telefone_plantao?: string | null;
           cargo?: string | null;
           foto_url?: string | null;
           sobre?: string | null;

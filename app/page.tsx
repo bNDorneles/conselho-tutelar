@@ -9,6 +9,7 @@ import {
   Phone,
   ShieldCheck,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -273,9 +274,19 @@ export default async function Home() {
             {conselheiros.map((conselheiro) => (
               <Card key={conselheiro.id} className="rounded-lg">
                 <CardHeader>
-                  <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-secondary text-sm font-semibold text-secondary-foreground">
-                    {conselheiro.nome.slice(0, 2).toUpperCase()}
-                  </div>
+                  {conselheiro.fotoUrl ? (
+                    <Image
+                      src={conselheiro.fotoUrl}
+                      alt={conselheiro.nome}
+                      width={64}
+                      height={64}
+                      className="mb-3 size-16 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-secondary text-sm font-semibold text-secondary-foreground">
+                      {conselheiro.nome.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
                   <CardTitle className="text-lg">{conselheiro.nome}</CardTitle>
                   <CardDescription>{conselheiro.cargo}</CardDescription>
                 </CardHeader>
@@ -284,7 +295,14 @@ export default async function Home() {
                     <p>Mandato: {conselheiro.mandato}</p>
                   ) : null}
                   {conselheiro.sobre ? <p>{conselheiro.sobre}</p> : null}
-                  {conselheiro.telefone ? <p>{conselheiro.telefone}</p> : null}
+                  {conselheiro.telefoneFixo ? (
+                    <p>Fixo: {conselheiro.telefoneFixo}</p>
+                  ) : null}
+                  {conselheiro.telefonePlantao ? (
+                    <p>Plantao: {conselheiro.telefonePlantao}</p>
+                  ) : conselheiro.telefone ? (
+                    <p>{conselheiro.telefone}</p>
+                  ) : null}
                   {conselheiro.email ? <p>{conselheiro.email}</p> : null}
                 </CardContent>
               </Card>

@@ -69,11 +69,13 @@ export function buildConselheiroProfileUpsert(
     id,
     nome: parseRequiredName(input.nome),
     email: optionalText(input.email),
-    telefone: optionalText(input.telefone),
+    telefone: optionalText(input.telefone_plantao) ?? optionalText(input.telefone),
+    telefone_fixo: optionalText(input.telefone_fixo),
+    telefone_plantao: optionalText(input.telefone_plantao),
     cargo: optionalText(input.cargo),
     foto_url: optionalText(input.foto_url),
     sobre: optionalText(input.sobre),
-    mandato: optionalText(input.mandato),
+    mandato: optionalText(input.mandato) ?? "2024-2028",
     role: "conselheiro",
     ativo: true,
     exibir_publico: input.exibir_publico === "true",
@@ -136,15 +138,36 @@ export async function upsertConselheiroAction(formData: FormData) {
   const profile = await requireActiveAdminProfile();
   const supabase = await createServerSupabaseClient();
   let payload: ProfileUpsert;
+  const id = String(formData.get("id") ?? "");
+  const foto = formData.get("foto");
+  let uploadedPhotoUrl: string | null = null;
+
+  if (foto instanceof File && foto.size > 0 && uuidPattern.test(id)) {
+    const extension = foto.type === "image/png" ? "png" : "jpg";
+    const path = `${id}/${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage
+      .from("conselheiros")
+      .upload(path, foto, {
+        contentType: foto.type,
+        upsert: true,
+      });
+
+    if (!uploadError) {
+      const { data } = supabase.storage.from("conselheiros").getPublicUrl(path);
+      uploadedPhotoUrl = data.publicUrl;
+    }
+  }
 
   try {
     payload = buildConselheiroProfileUpsert({
-      id: String(formData.get("id") ?? ""),
+      id,
       nome: String(formData.get("nome") ?? ""),
       email: String(formData.get("email") ?? ""),
       telefone: String(formData.get("telefone") ?? ""),
+      telefone_fixo: String(formData.get("telefone_fixo") ?? ""),
+      telefone_plantao: String(formData.get("telefone_plantao") ?? ""),
       cargo: String(formData.get("cargo") ?? ""),
-      foto_url: String(formData.get("foto_url") ?? ""),
+      foto_url: uploadedPhotoUrl ?? String(formData.get("foto_url") ?? ""),
       sobre: String(formData.get("sobre") ?? ""),
       mandato: String(formData.get("mandato") ?? ""),
       exibir_publico: String(formData.get("exibir_publico") ?? ""),

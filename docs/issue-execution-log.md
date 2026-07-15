@@ -544,3 +544,23 @@ Resultado:
 - Acoes de ativar/desativar foram mantidas.
 - Action compartilhada criada para atualizar catalogos com auditoria.
 - Teste adicionado para payload de edicao de catalogo.
+
+## Issue #29 - Cadastro de conselheiros completo
+
+Tipo da issue: fullstack/admin/storage
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/29-conselheiros-foto-telefones
+Comandos de verificacao executados:
+- npm.cmd test
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- `profiles` ganhou campos `telefone_fixo` e `telefone_plantao`.
+- Migration criada para bucket publico `conselheiros` no Supabase Storage e policies de leitura/gestao.
+- Cadastro de conselheiro aceita upload local PNG/JPG e URL alternativa.
+- Mandato passa a vir com padrao `2024-2028`.
+- Telefone fixo e plantao/WhatsApp foram separados na area administrativa e publica.
+- Home publica exibe foto real do conselheiro quando `foto_url` estiver disponivel.
+- Configuracao de imagens remotas do Next permite imagens do Supabase.

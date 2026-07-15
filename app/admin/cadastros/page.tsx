@@ -264,14 +264,24 @@ export default async function CadastrosPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <form action={upsertConselheiroAction} className="grid gap-3">
+              <form
+                action={upsertConselheiroAction}
+                className="grid gap-3"
+                encType="multipart/form-data"
+              >
                 <Input name="id" placeholder="UID do usuario no Supabase Auth" required />
                 <Input name="nome" placeholder="Nome do conselheiro" required />
                 <Input name="email" type="email" placeholder="Email" />
-                <Input name="telefone" placeholder="Telefone ou WhatsApp" />
+                <Input name="telefone_fixo" placeholder="Telefone fixo" />
+                <Input name="telefone_plantao" placeholder="Telefone plantao / WhatsApp" />
                 <Input name="cargo" placeholder="Cargo" />
-                <Input name="mandato" placeholder="Mandato, exemplo: 2024-2028" />
-                <Input name="foto_url" placeholder="URL da foto" />
+                <Input
+                  name="mandato"
+                  placeholder="Mandato"
+                  defaultValue="2024-2028"
+                />
+                <Input name="foto" type="file" accept="image/png,image/jpeg" />
+                <Input name="foto_url" placeholder="URL da foto alternativa" />
                 <Input name="sobre" placeholder="Resumo publico" />
                 <label className="flex items-center gap-2 text-sm text-muted-foreground">
                   <input
@@ -295,6 +305,13 @@ export default async function CadastrosPage() {
                       <p className="text-xs text-muted-foreground">
                         {item.role} · {item.ativo ? "Ativo" : "Inativo"}
                         {item.exibir_publico ? " · Publico" : ""}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {item.telefone_fixo ? `Fixo: ${item.telefone_fixo}` : ""}
+                        {item.telefone_fixo && item.telefone_plantao ? " · " : ""}
+                        {item.telefone_plantao
+                          ? `Plantao: ${item.telefone_plantao}`
+                          : ""}
                       </p>
                     </div>
                     <ToggleForm table="profiles" id={item.id} ativo={item.ativo} />

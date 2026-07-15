@@ -35,6 +35,8 @@ export type PublicConselheiro = {
   nome: string;
   cargo: string;
   telefone: string | null;
+  telefoneFixo: string | null;
+  telefonePlantao: string | null;
   email: string | null;
   fotoUrl: string | null;
   sobre: string | null;
@@ -111,7 +113,7 @@ export async function getPublicConselheiros() {
   const supabase = await createServerSupabaseClient();
   const { data } = await supabase
     .from("profiles")
-    .select("id,nome,email,telefone,cargo,foto_url,sobre,mandato")
+    .select("id,nome,email,telefone,telefone_fixo,telefone_plantao,cargo,foto_url,sobre,mandato")
     .eq("role", "conselheiro")
     .eq("ativo", true)
     .eq("exibir_publico", true)
@@ -123,6 +125,8 @@ export async function getPublicConselheiros() {
       nome: profile.nome,
       cargo: profile.cargo ?? "Conselheiro tutelar",
       telefone: profile.telefone,
+      telefoneFixo: profile.telefone_fixo,
+      telefonePlantao: profile.telefone_plantao,
       email: profile.email,
       fotoUrl: profile.foto_url,
       sobre: profile.sobre,
