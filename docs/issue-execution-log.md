@@ -360,3 +360,22 @@ Resultado:
 - Dados institucionais expandidos com WhatsApp, Facebook, Instagram e mapa.
 - Helper publico criado para normalizar dados do Conselho Tutelar.
 - Testes adicionados para copy publica e dados institucionais.
+
+## Issue #18 - Expandir formulario publico de denuncia
+
+Tipo da issue: fullstack/security
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/18-rich-denuncia-form
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Formulario publico expandido com dados de vitima, familia, escola, genero e localizacao.
+- Validacao Zod atualizada para campos opcionais e genero informado.
+- Payload puro criado para gravacao da denuncia.
+- Migration adicionada para novos campos de denuncia.
+- Tipos Supabase atualizados.
+- Testes adicionados para validacao e payload do formulario.

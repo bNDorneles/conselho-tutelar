@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { buildDenunciaInsertPayload } from "./payload";
 import { denunciaSchema } from "./validation";
 
 function getFormValue(formData: FormData, key: string) {
@@ -22,6 +23,19 @@ export async function submitDenunciaAction(formData: FormData) {
       formData,
       "vitima_endereco_informado"
     ),
+    vitima_nome_pai_informado: getFormValue(
+      formData,
+      "vitima_nome_pai_informado"
+    ),
+    vitima_nome_mae_informado: getFormValue(
+      formData,
+      "vitima_nome_mae_informado"
+    ),
+    vitima_escola_informada: getFormValue(formData, "vitima_escola_informada"),
+    vitima_genero_informado: getFormValue(
+      formData,
+      "vitima_genero_informado"
+    ),
   });
 
   if (!parsed.success) {
@@ -33,14 +47,9 @@ export async function submitDenunciaAction(formData: FormData) {
   }
 
   const supabase = await createServerSupabaseClient();
-  const { error } = await supabase.from("denuncias").insert({
-    motivo_id: parsed.data.motivo_id,
-    relato: parsed.data.relato,
-    local_ocorrencia: parsed.data.local_ocorrencia,
-    vitima_nome_informado: parsed.data.vitima_nome_informado,
-    vitima_idade_informada: parsed.data.vitima_idade_informada,
-    vitima_endereco_informado: parsed.data.vitima_endereco_informado,
-  });
+  const { error } = await supabase
+    .from("denuncias")
+    .insert(buildDenunciaInsertPayload(parsed.data));
 
   if (error) {
     redirect("/denuncia?error=nao_foi_possivel_enviar");

@@ -124,6 +124,10 @@ export type Database = {
           vitima_nome_informado: string | null;
           vitima_idade_informada: number | null;
           vitima_endereco_informado: string | null;
+          vitima_nome_pai_informado: string | null;
+          vitima_nome_mae_informado: string | null;
+          vitima_escola_informada: string | null;
+          vitima_genero_informado: string | null;
           observacoes_internas: string | null;
           created_at: string;
           updated_at: string;
@@ -137,6 +141,10 @@ export type Database = {
           vitima_nome_informado?: string | null;
           vitima_idade_informada?: number | null;
           vitima_endereco_informado?: string | null;
+          vitima_nome_pai_informado?: string | null;
+          vitima_nome_mae_informado?: string | null;
+          vitima_escola_informada?: string | null;
+          vitima_genero_informado?: string | null;
           observacoes_internas?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -150,6 +158,10 @@ export type Database = {
           vitima_nome_informado?: string | null;
           vitima_idade_informada?: number | null;
           vitima_endereco_informado?: string | null;
+          vitima_nome_pai_informado?: string | null;
+          vitima_nome_mae_informado?: string | null;
+          vitima_escola_informada?: string | null;
+          vitima_genero_informado?: string | null;
           observacoes_internas?: string | null;
           created_at?: string;
           updated_at?: string;
