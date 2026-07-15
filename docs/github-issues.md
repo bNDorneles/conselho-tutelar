@@ -571,3 +571,155 @@ Politica de modelos:
 - Nenhuma rota publica lista dados sensiveis.
 - Politicas de acesso foram testadas.
 - Documentacao de seguranca esta atualizada.
+
+## Milestone 9 - Produto Operacional E Relatorios
+
+### Issue 26 - Fluxo visual completo do atendimento
+
+**Tipo:** fullstack/business
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/26-fluxo-operacional-completo`
+
+**Objetivo:** Mostrar o fluxo real do atendimento, conectando denuncia, chamado, medida protetiva, encaminhamento e finalizacao.
+
+**Escopo:**
+
+- Representar no Kanban o fluxo: denuncia recebida, atribuida, em analise, chamado aberto, medida aplicada, encaminhamento registrado e finalizado.
+- Exibir a etapa operacional derivada quando uma denuncia ja tiver chamado vinculado.
+- Corrigir a exibicao de denuncia vinculada em chamado finalizado para nao parecer pendencia em analise.
+- Criar helpers testaveis para calcular etapa operacional.
+- Registrar auditoria nas transicoes relevantes.
+
+**Criterios de aceite:**
+
+- Kanban mostra todo o fluxo do sistema.
+- Denuncia convertida em chamado acompanha o status do chamado.
+- Chamado finalizado nao exibe denuncia vinculada como "em analise" ativa.
+- Testes cobrem as etapas do fluxo.
+
+### Issue 27 - Acessibilidade visual e identidade das telas
+
+**Tipo:** frontend/ux
+
+**Modelo recomendado:** `gpt-5.6-sol`
+
+**Branch sugerida:** `issue/27-identidade-visual-fluxos`
+
+**Objetivo:** Melhorar a leitura visual do painel e diferenciar melhor as areas administrativas.
+
+**Escopo:**
+
+- Diferenciar visualmente Denuncias, Chamados, Cadastros e Relatorios.
+- Criar badges de status com cores semanticas e contraste adequado.
+- Adicionar timeline/resumo de etapas em denuncia e chamado.
+- Melhorar hierarquia visual de cards, titulos e acoes.
+- Manter visual acolhedor e claro, evitando uma interface de uma cor so.
+
+**Criterios de aceite:**
+
+- Usuario entende rapidamente em qual tela esta.
+- Status e etapas ficam claros por texto e cor.
+- Interface continua responsiva e acessivel.
+
+### Issue 28 - Cadastros auxiliares editaveis e compactos
+
+**Tipo:** fullstack/admin-ui
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/28-cadastros-editaveis-compactos`
+
+**Objetivo:** Tornar motivos de denuncia e medidas protetivas mais faceis de manter.
+
+**Escopo:**
+
+- Trocar listas longas por visual compacto, com secoes recolhiveis ou tabela simples.
+- Adicionar edicao de nome e descricao para motivos.
+- Adicionar edicao de nome e descricao para medidas protetivas.
+- Manter ativar/desativar.
+- Exibir contadores de ativos e inativos.
+- Registrar auditoria de edicao.
+
+**Criterios de aceite:**
+
+- Admin cria, edita, ativa e desativa motivos.
+- Admin cria, edita, ativa e desativa medidas.
+- Tela nao lista tudo aberto de forma cansativa.
+
+### Issue 29 - Cadastro de conselheiros completo
+
+**Tipo:** fullstack/admin/storage
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/29-conselheiros-foto-telefones`
+
+**Objetivo:** Melhorar o cadastro de conselheiros para uso real e exibicao publica.
+
+**Escopo:**
+
+- Permitir foto local em PNG/JPG, preferencialmente via Supabase Storage.
+- Manter fallback com URL caso Storage ainda nao esteja configurado.
+- Separar telefone fixo e telefone de plantao/WhatsApp.
+- Deixar mandato padrao como `2024-2028`.
+- Melhorar preview/lista de conselheiros cadastrados.
+- Refletir dados publicos na area publica.
+
+**Criterios de aceite:**
+
+- Admin cadastra conselheiro com foto local.
+- Mandato vem predefinido como `2024-2028`.
+- Telefones fixo e plantao ficam separados.
+- Conselheiro publico aparece corretamente na home.
+
+### Issue 30 - Relatorios gerenciais avancados
+
+**Tipo:** frontend/data-viz
+
+**Modelo recomendado:** `gpt-5.6-sol`
+
+**Branch sugerida:** `issue/30-relatorios-graficos-comparacao`
+
+**Objetivo:** Evoluir relatorios de barras simples para visualizacoes gerenciais com comparacao.
+
+**Escopo:**
+
+- Adicionar graficos de barras.
+- Adicionar grafico de pizza/donut para distribuicoes.
+- Permitir selecionar categorias para comparacao.
+- Comparar denuncias por motivo, chamados por status, chamados por conselheiro, medidas aplicadas e encaminhamentos.
+- Manter filtro por periodo.
+- Melhorar estados vazios.
+
+**Criterios de aceite:**
+
+- Relatorios mostram graficos claros.
+- Usuario seleciona categorias para comparar.
+- Dados respeitam filtros do periodo.
+- Testes cobrem agregacoes e filtros.
+
+### Issue 31 - Exportacao PDF de relatorios
+
+**Tipo:** fullstack/reports
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/31-exportacao-pdf-relatorios`
+
+**Objetivo:** Permitir exportar relatorios selecionados em PDF.
+
+**Escopo:**
+
+- Criar selecao de blocos para exportacao.
+- Permitir exportar comparacoes escolhidas.
+- Incluir titulo, periodo, filtros, data de emissao e responsavel logado.
+- Incluir tabelas resumidas dos graficos.
+- Gerar PDF por fluxo seguro autenticado.
+
+**Criterios de aceite:**
+
+- Usuario autorizado exporta PDF com os blocos selecionados.
+- PDF respeita filtros e categorias.
+- Exportacao nao expoe dados sensiveis fora do painel autenticado.
