@@ -341,3 +341,22 @@ Resultado:
 - README atualizado com resumo de deploy.
 - `.env.local.example` documentado.
 - Checklist de Supabase Auth, variaveis Vercel e pos-deploy criado.
+
+## Issue #17 - Revisar home publica e linguagem institucional
+
+Tipo da issue: frontend/content
+Modelo recomendado: gpt-5.6-terra
+Branch base: develop
+Branch da issue: issue/17-public-home-real-product
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Backlog atualizado com as novas issues de produto real.
+- Spec e plano das Issues 17 a 20 criados.
+- Home publica reescrita sem linguagem tecnica de MVP.
+- Dados institucionais expandidos com WhatsApp, Facebook, Instagram e mapa.
+- Helper publico criado para normalizar dados do Conselho Tutelar.
+- Testes adicionados para copy publica e dados institucionais.
