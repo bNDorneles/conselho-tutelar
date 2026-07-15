@@ -1,10 +1,17 @@
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 import { requireAdminProfile } from "../auth/admin";
 import { createServerSupabaseClient } from "../supabase/server";
 import type { Database } from "../supabase/database.types";
+import {
+  canTransitionDenunciaStatus,
+  denunciaStatusColumns,
+  denunciaStatusLabels,
+  isDenunciaStatus,
+  type DenunciaStatus,
+} from "./denuncia-workflow";
 
-export type DenunciaStatus = Database["public"]["Enums"]["denuncia_status"];
 type AuditAction = Database["public"]["Enums"]["audit_action"];
 type DenunciaRow = Database["public"]["Tables"]["denuncias"]["Row"];
 
@@ -25,37 +32,16 @@ export type DenunciaFilters = {
   dataFim?: string;
 };
 
-export const denunciaStatusColumns: DenunciaStatus[] = [
-  "recebida",
-  "atribuida",
-  "em_analise",
-  "convertida_em_chamado",
-  "arquivada",
-];
-
-export const denunciaStatusLabels: Record<DenunciaStatus, string> = {
-  recebida: "Recebida",
-  atribuida: "Atribuida",
-  em_analise: "Em analise",
-  convertida_em_chamado: "Convertida em chamado",
-  arquivada: "Arquivada",
+export {
+  canTransitionDenunciaStatus,
+  denunciaStatusColumns,
+  denunciaStatusLabels,
+  type DenunciaStatus,
 };
-
-const allowedTransitions = new Set([
-  "recebida:atribuida",
-  "atribuida:em_analise",
-  "atribuida:recebida",
-  "em_analise:arquivada",
-  "arquivada:em_analise",
-]);
 
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-
-function isDenunciaStatus(value: string): value is DenunciaStatus {
-  return denunciaStatusColumns.includes(value as DenunciaStatus);
-}
 
 function getSearchValue(
   input: Record<string, string | string[] | undefined>,
@@ -64,13 +50,6 @@ function getSearchValue(
   const value = input[key];
 
   return Array.isArray(value) ? value[0] : value;
-}
-
-export function canTransitionDenunciaStatus(
-  from: DenunciaStatus,
-  to: DenunciaStatus
-) {
-  return allowedTransitions.has(`${from}:${to}`);
 }
 
 export function parseDenunciaFilters(
@@ -317,4 +296,47 @@ export async function updateDenunciaStatusAction(formData: FormData) {
   });
 
   redirect("/admin/denuncias");
+}
+
+export async function moveDenunciaStatusAction(input: {
+  denunciaId: string;
+  fromStatus: DenunciaStatus;
+  toStatus: DenunciaStatus;
+}) {
+  "use server";
+
+  const profile = await requireAdminProfile();
+
+  if (
+    !uuidPattern.test(input.denunciaId) ||
+    !isDenunciaStatus(input.fromStatus) ||
+    !isDenunciaStatus(input.toStatus) ||
+    !canTransitionDenunciaStatus(input.fromStatus, input.toStatus)
+  ) {
+    throw new Error("transicao invalida");
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase
+    .from("denuncias")
+    .update({ status: input.toStatus })
+    .eq("id", input.denunciaId)
+    .eq("status", input.fromStatus);
+
+  if (error) {
+    throw new Error("nao foi possivel atualizar");
+  }
+
+  await insertAuditLog({
+    userId: profile.id,
+    action: "status_change",
+    entityId: input.denunciaId,
+    metadata: {
+      origem: "admin_denuncias_kanban_dnd",
+      status_anterior: input.fromStatus,
+      status_novo: input.toStatus,
+    },
+  });
+
+  revalidatePath("/admin/denuncias");
 }
