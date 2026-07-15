@@ -345,6 +345,7 @@ Ja existem:
 - Registro de encaminhamentos no detalhe do chamado.
 - Historico/timeline de encaminhamentos por chamado.
 - Cadastros auxiliares admin-only em `/admin/cadastros`.
+- Relatorios basicos em `/admin/relatorios`.
 
 Ainda nao existem:
 
