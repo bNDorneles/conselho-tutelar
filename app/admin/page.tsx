@@ -168,7 +168,15 @@ export default async function AdminPage() {
 
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Chamados recentes</CardTitle>
+              <div className="flex items-center justify-between gap-3">
+                <CardTitle>Chamados recentes</CardTitle>
+                <Link
+                  href="/admin/chamados"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Ver chamados
+                </Link>
+              </div>
               <CardDescription>
                 Casos formalizados mais recentes para acompanhamento interno.
               </CardDescription>

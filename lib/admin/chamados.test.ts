@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildChamadoInsert,
+  buildChamadoStatusUpdate,
   buildVitimaInsert,
+  canTransitionChamadoStatus,
   canCreateChamadoFromDenuncia,
   denunciaHasVictimaInfo,
+  parseChamadoFilters,
 } from "./chamados";
 import type { AdminDenuncia } from "./denuncias";
 
@@ -75,5 +78,42 @@ describe("chamado conversion helpers", () => {
         status: "convertida_em_chamado",
       })
     ).toBe(false);
+  });
+
+  it("allows only issue 12 chamado status transitions", () => {
+    expect(canTransitionChamadoStatus("aberto", "em_atendimento")).toBe(true);
+    expect(canTransitionChamadoStatus("em_atendimento", "aberto")).toBe(true);
+    expect(canTransitionChamadoStatus("em_atendimento", "finalizado")).toBe(true);
+    expect(canTransitionChamadoStatus("finalizado", "em_atendimento")).toBe(true);
+
+    expect(canTransitionChamadoStatus("aberto", "finalizado")).toBe(false);
+    expect(canTransitionChamadoStatus("finalizado", "aberto")).toBe(false);
+  });
+
+  it("parses chamado filters from search params", () => {
+    expect(
+      parseChamadoFilters({
+        status: "aberto",
+        conselheiro_id: "1a15f124-3bd4-4c75-80fd-4d66a13383cf",
+        data_inicio: "2026-07-01",
+        data_fim: "2026-07-14",
+      })
+    ).toEqual({
+      status: "aberto",
+      conselheiroId: "1a15f124-3bd4-4c75-80fd-4d66a13383cf",
+      dataInicio: "2026-07-01",
+      dataFim: "2026-07-14",
+    });
+  });
+
+  it("builds status update payload with closing date rules", () => {
+    expect(buildChamadoStatusUpdate("finalizado")).toEqual({
+      status: "finalizado",
+      data_fechamento: expect.any(String),
+    });
+    expect(buildChamadoStatusUpdate("em_atendimento")).toEqual({
+      status: "em_atendimento",
+      data_fechamento: null,
+    });
   });
 });

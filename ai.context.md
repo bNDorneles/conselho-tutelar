@@ -339,10 +339,12 @@ Ja existem:
 - Auditoria de leitura e mudanca de status para denuncias.
 - Criacao de chamado a partir do detalhe da denuncia.
 - Criacao opcional de vitima quando a denuncia tiver dados informados.
+- Listagem de chamados em `/admin/chamados`.
+- Detalhe protegido de chamado em `/admin/chamados/[id]`.
+- Alteracao auditada de status de chamados.
 
 Ainda nao existem:
 
-- Tela de chamados.
 - Deploy.
 
 ## Decisao Arquitetural Importante
