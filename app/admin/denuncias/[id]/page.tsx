@@ -12,8 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { requireAdminProfile } from "@/lib/auth/admin";
+import { assignDenunciaAction } from "@/lib/admin/denuncia-actions";
 import {
-  assignDenunciaAction,
   denunciaStatusLabels,
   getAdminDenunciaDetail,
   recordDenunciaRead,

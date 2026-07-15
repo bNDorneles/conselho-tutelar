@@ -16,14 +16,16 @@ import { Label } from "@/components/ui/label";
 import { requireAdminProfile } from "@/lib/auth/admin";
 import { getConselheiroOptions } from "@/lib/admin/chamados";
 import {
+  moveDenunciaStatusAction,
+  updateDenunciaStatusAction,
+} from "@/lib/admin/denuncia-actions";
+import {
   buildDenunciaStatusGroups,
   denunciaStatusColumns,
   denunciaStatusLabels,
   getAdminDenuncias,
   getMotivosDenunciaOptions,
-  moveDenunciaStatusAction,
   parseDenunciaFilters,
-  updateDenunciaStatusAction,
   type DenunciaStatus,
 } from "@/lib/admin/denuncias";
 

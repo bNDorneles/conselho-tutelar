@@ -22,7 +22,7 @@ import {
   denunciaStatusLabels,
   type DenunciaStatus,
 } from "@/lib/admin/denuncia-workflow";
-import type { AdminDenuncia } from "@/lib/admin/denuncias";
+import type { AdminDenuncia } from "@/lib/admin/denuncia-types";
 
 type StatusGroups = Record<DenunciaStatus, AdminDenuncia[]>;
 
