@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildCatalogItemUpdate,
   buildConselheiroProfileUpsert,
   buildConselhoUpdate,
   parseRequiredName,
@@ -76,5 +77,27 @@ describe("cadastros admin helpers", () => {
         email: "maria@example.com",
       }),
     ).toThrow("usuario invalido");
+  });
+
+  it("builds catalog item update payload with required name and optional description", () => {
+    expect(
+      buildCatalogItemUpdate({
+        nome: "  Violencia fisica  ",
+        descricao: "  Caso de agressao  ",
+      }),
+    ).toEqual({
+      nome: "Violencia fisica",
+      descricao: "Caso de agressao",
+    });
+
+    expect(
+      buildCatalogItemUpdate({
+        nome: "Negligencia",
+        descricao: "",
+      }),
+    ).toEqual({
+      nome: "Negligencia",
+      descricao: null,
+    });
   });
 });

@@ -6,6 +6,9 @@ import type { Database } from "../supabase/database.types";
 
 type ConselhoUpdate = Database["public"]["Tables"]["conselho_tutelar"]["Update"];
 type ProfileUpsert = Database["public"]["Tables"]["profiles"]["Insert"];
+type CatalogItemUpdate =
+  | Database["public"]["Tables"]["motivos_denuncia"]["Update"]
+  | Database["public"]["Tables"]["medidas_protetivas"]["Update"];
 
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -41,6 +44,15 @@ export function buildConselhoUpdate(
     facebook_url: optionalText(input.facebook_url),
     instagram_url: optionalText(input.instagram_url),
     mapa_url: optionalText(input.mapa_url),
+  };
+}
+
+export function buildCatalogItemUpdate(
+  input: Record<string, string | undefined>,
+): CatalogItemUpdate {
+  return {
+    nome: parseRequiredName(input.nome),
+    descricao: optionalText(input.descricao),
   };
 }
 
@@ -231,6 +243,50 @@ export async function toggleCadastroAction(formData: FormData) {
       : table === "motivos_denuncia"
         ? supabase.from("motivos_denuncia").update({ ativo: !ativo }).eq("id", id)
         : supabase.from("medidas_protetivas").update({ ativo: !ativo }).eq("id", id);
+  const { error } = await query;
+
+  if (!error) {
+    await insertAuditLog({
+      actorId: profile.id,
+      action: "update",
+      entityTable: table,
+      entityId: id,
+    });
+  }
+
+  redirect("/admin/cadastros");
+}
+
+export async function updateCatalogItemAction(formData: FormData) {
+  "use server";
+
+  const profile = await requireActiveAdminProfile();
+  const table = String(formData.get("table") ?? "");
+  const id = String(formData.get("id") ?? "");
+
+  if (
+    !["motivos_denuncia", "medidas_protetivas"].includes(table) ||
+    !uuidPattern.test(id)
+  ) {
+    redirect("/admin/cadastros");
+  }
+
+  let payload: CatalogItemUpdate;
+
+  try {
+    payload = buildCatalogItemUpdate({
+      nome: String(formData.get("nome") ?? ""),
+      descricao: String(formData.get("descricao") ?? ""),
+    });
+  } catch {
+    redirect("/admin/cadastros?error=catalogo_invalido");
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const query =
+    table === "motivos_denuncia"
+      ? supabase.from("motivos_denuncia").update(payload).eq("id", id)
+      : supabase.from("medidas_protetivas").update(payload).eq("id", id);
   const { error } = await query;
 
   if (!error) {

@@ -17,6 +17,7 @@ import {
   getAdminCadastrosData,
   requireActiveAdminProfile,
   toggleCadastroAction,
+  updateCatalogItemAction,
   updateConselhoAction,
   upsertConselheiroAction,
 } from "@/lib/admin/cadastros";
@@ -42,6 +43,62 @@ function ToggleForm({
         {ativo ? "Desativar" : "Ativar"}
       </Button>
     </form>
+  );
+}
+
+function CatalogEditor({
+  table,
+  items,
+  title,
+}: {
+  table: "motivos_denuncia" | "medidas_protetivas";
+  items: Array<{
+    id: string;
+    nome: string;
+    descricao: string | null;
+    ativo: boolean;
+  }>;
+  title: string;
+}) {
+  const activeCount = items.filter((item) => item.ativo).length;
+  const inactiveCount = items.length - activeCount;
+
+  return (
+    <details className="rounded-lg border bg-background p-3" open={items.length <= 4}>
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+        <span className="text-sm font-semibold">{title}</span>
+        <span className="text-xs text-muted-foreground">
+          {activeCount} ativos · {inactiveCount} inativos
+        </span>
+      </summary>
+      <div className="mt-3 space-y-3">
+        {items.map((item) => (
+          <div key={item.id} className="rounded-lg border bg-card p-3">
+            <form action={updateCatalogItemAction} className="grid gap-2">
+              <input type="hidden" name="table" value={table} />
+              <input type="hidden" name="id" value={item.id} />
+              <div className="grid gap-2 sm:grid-cols-[1fr_1.3fr_auto]">
+                <Input name="nome" defaultValue={item.nome} required />
+                <Input
+                  name="descricao"
+                  defaultValue={item.descricao ?? ""}
+                  placeholder="Descricao opcional"
+                />
+                <Button type="submit" variant="outline" size="sm">
+                  Editar
+                </Button>
+              </div>
+            </form>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <p className="text-xs text-muted-foreground">
+                {item.ativo ? "Ativo" : "Inativo"}
+              </p>
+              <ToggleForm table={table} id={item.id} ativo={item.ativo} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </details>
   );
 }
 
@@ -89,26 +146,11 @@ export default async function CadastrosPage() {
                 <Input name="descricao" placeholder="Descricao opcional" />
                 <Button type="submit">Adicionar motivo</Button>
               </form>
-              <div className="space-y-2">
-                {motivos.map((motivo) => (
-                  <div
-                    key={motivo.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border bg-background p-3"
-                  >
-                    <div>
-                      <p className="text-sm font-medium">{motivo.nome}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {motivo.ativo ? "Ativo" : "Inativo"}
-                      </p>
-                    </div>
-                    <ToggleForm
-                      table="motivos_denuncia"
-                      id={motivo.id}
-                      ativo={motivo.ativo}
-                    />
-                  </div>
-                ))}
-              </div>
+              <CatalogEditor
+                table="motivos_denuncia"
+                items={motivos}
+                title="Motivos cadastrados"
+              />
             </CardContent>
           </Card>
 
@@ -123,26 +165,11 @@ export default async function CadastrosPage() {
                 <Input name="descricao" placeholder="Descricao opcional" />
                 <Button type="submit">Adicionar medida</Button>
               </form>
-              <div className="space-y-2">
-                {medidas.map((medida) => (
-                  <div
-                    key={medida.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border bg-background p-3"
-                  >
-                    <div>
-                      <p className="text-sm font-medium">{medida.nome}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {medida.ativo ? "Ativa" : "Inativa"}
-                      </p>
-                    </div>
-                    <ToggleForm
-                      table="medidas_protetivas"
-                      id={medida.id}
-                      ativo={medida.ativo}
-                    />
-                  </div>
-                ))}
-              </div>
+              <CatalogEditor
+                table="medidas_protetivas"
+                items={medidas}
+                title="Medidas cadastradas"
+              />
             </CardContent>
           </Card>
         </div>

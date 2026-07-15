@@ -526,3 +526,21 @@ Resultado:
 - Telas de detalhe de denuncia e chamado receberam trilha visual do fluxo de atendimento.
 - Cabecalhos de Denuncias, Chamados, Cadastros e Relatorios passaram a ter acentos visuais distintos.
 - Testes adicionados para proteger mapeamento de areas, tons e classes de status.
+
+## Issue #28 - Cadastros auxiliares editaveis e compactos
+
+Tipo da issue: fullstack/admin-ui
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/28-cadastros-editaveis-compactos
+Comandos de verificacao executados:
+- npm.cmd run test -- lib/admin/cadastros.test.ts
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Motivos de denuncia e medidas protetivas ganharam edicao inline de nome e descricao.
+- Listas longas foram compactadas em secoes recolhiveis com contadores de ativos e inativos.
+- Acoes de ativar/desativar foram mantidas.
+- Action compartilhada criada para atualizar catalogos com auditoria.
+- Teste adicionado para payload de edicao de catalogo.
