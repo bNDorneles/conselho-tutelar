@@ -22,6 +22,11 @@ import {
   type ChamadoStatus,
 } from "@/lib/admin/chamados";
 import { formatDashboardDate } from "@/lib/admin/dashboard";
+import {
+  createEncaminhamentoAction,
+  getChamadoEncaminhamentos,
+  getMedidasProtetivasOptions,
+} from "@/lib/admin/encaminhamentos";
 
 export const dynamic = "force-dynamic";
 
@@ -65,7 +70,11 @@ export default async function ChamadoDetailPage({
   const profile = await requireAdminProfile();
   const { id } = await params;
   const query = await searchParams;
-  const chamado = await getAdminChamadoDetail(id);
+  const [chamado, medidas, encaminhamentos] = await Promise.all([
+    getAdminChamadoDetail(id),
+    getMedidasProtetivasOptions(),
+    getChamadoEncaminhamentos(id),
+  ]);
 
   if (!chamado) {
     notFound();
@@ -118,6 +127,11 @@ export default async function ChamadoDetailPage({
         {query?.success === "status_atualizado" ? (
           <p className="mb-5 rounded-lg border border-primary/20 bg-primary/8 px-3 py-2 text-sm text-primary">
             Status do chamado atualizado.
+          </p>
+        ) : null}
+        {query?.success === "encaminhamento_criado" ? (
+          <p className="mb-5 rounded-lg border border-primary/20 bg-primary/8 px-3 py-2 text-sm text-primary">
+            Encaminhamento registrado no historico do chamado.
           </p>
         ) : null}
         {query?.error ? (
@@ -233,6 +247,126 @@ export default async function ChamadoDetailPage({
               ) : (
                 <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
                   Chamado sem denuncia vinculada.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <Card className="rounded-lg">
+            <CardHeader>
+              <CardTitle>Novo encaminhamento</CardTitle>
+              <CardDescription>
+                Registre acoes tomadas durante o atendimento.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form action={createEncaminhamentoAction} className="space-y-4">
+                <input type="hidden" name="chamado_id" value={chamado.id} />
+                <div className="space-y-2">
+                  <label
+                    htmlFor="medida_protetiva_id"
+                    className="text-sm font-medium"
+                  >
+                    Medida protetiva
+                  </label>
+                  <select
+                    id="medida_protetiva_id"
+                    name="medida_protetiva_id"
+                    className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    <option value="">Sem medida vinculada</option>
+                    {medidas.map((medida) => (
+                      <option key={medida.id} value={medida.id}>
+                        {medida.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="orgao_destino" className="text-sm font-medium">
+                    Orgao destino
+                  </label>
+                  <input
+                    id="orgao_destino"
+                    name="orgao_destino"
+                    className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="data_encaminhamento"
+                    className="text-sm font-medium"
+                  >
+                    Data
+                  </label>
+                  <input
+                    id="data_encaminhamento"
+                    name="data_encaminhamento"
+                    type="datetime-local"
+                    className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="descricao" className="text-sm font-medium">
+                    Descricao
+                  </label>
+                  <textarea
+                    id="descricao"
+                    name="descricao"
+                    required
+                    rows={5}
+                    className="min-h-24 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  />
+                </div>
+                <Button type="submit" className="w-full">
+                  Registrar encaminhamento
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-lg">
+            <CardHeader>
+              <CardTitle>Historico do chamado</CardTitle>
+              <CardDescription>
+                Encaminhamentos registrados para este atendimento.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {encaminhamentos.length > 0 ? (
+                encaminhamentos.map((encaminhamento) => (
+                  <div
+                    key={encaminhamento.id}
+                    className="rounded-lg border bg-background p-3"
+                  >
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <Badge variant="secondary" className="rounded-lg">
+                        {encaminhamento.medidas_protetivas?.nome ??
+                          "Encaminhamento"}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDashboardDate(
+                          encaminhamento.data_encaminhamento
+                        )}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      {encaminhamento.descricao}
+                    </p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Responsavel:{" "}
+                      {encaminhamento.profiles?.nome ?? "Nao informado"}
+                      {encaminhamento.orgao_destino
+                        ? ` · Destino: ${encaminhamento.orgao_destino}`
+                        : ""}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
+                  Nenhum encaminhamento registrado ainda.
                 </p>
               )}
             </CardContent>

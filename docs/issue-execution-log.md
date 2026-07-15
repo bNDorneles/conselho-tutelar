@@ -270,3 +270,20 @@ Resultado:
 - Status de chamados alteravel com validacao de transicoes.
 - `data_fechamento` preenchida ao finalizar e limpa ao reabrir atendimento.
 - Auditoria criada para leitura e mudanca de status de chamados.
+
+## Issue #13 - Implementar encaminhamentos e medidas protetivas
+
+Tipo da issue: fullstack/business
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/13-encaminhamentos
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Formulario de encaminhamento criado em `/admin/chamados/[id]`.
+- Historico de encaminhamentos exibido no detalhe do chamado.
+- Medida protetiva opcional integrada ao encaminhamento.
+- Auditoria criada ao registrar encaminhamento.

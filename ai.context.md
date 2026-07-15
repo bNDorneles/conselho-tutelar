@@ -342,6 +342,8 @@ Ja existem:
 - Listagem de chamados em `/admin/chamados`.
 - Detalhe protegido de chamado em `/admin/chamados/[id]`.
 - Alteracao auditada de status de chamados.
+- Registro de encaminhamentos no detalhe do chamado.
+- Historico/timeline de encaminhamentos por chamado.
 
 Ainda nao existem:
 
