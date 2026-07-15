@@ -1,4 +1,4 @@
-import { AlertCircle, ShieldCheck } from "lucide-react";
+import { AlertCircle, ArrowLeft, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { submitDenunciaAction } from "@/lib/denuncias/actions";
@@ -61,9 +61,13 @@ export default async function DenunciaPage({ searchParams }: DenunciaPageProps) 
           <Link href="/" className="text-sm font-semibold">
             Conselho Tutelar
           </Link>
-          <span className="text-xs text-muted-foreground">
-            Denuncia anonima
-          </span>
+          <Link
+            href="/"
+            className="inline-flex h-8 items-center justify-center gap-2 rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Voltar ao inicio
+          </Link>
         </div>
       </header>
 
