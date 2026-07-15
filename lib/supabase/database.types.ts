@@ -13,6 +13,13 @@ export type Database = {
         Row: {
           id: string;
           nome: string;
+          email: string | null;
+          telefone: string | null;
+          cargo: string | null;
+          foto_url: string | null;
+          sobre: string | null;
+          mandato: string | null;
+          exibir_publico: boolean;
           role: Database["public"]["Enums"]["profile_role"];
           ativo: boolean;
           created_at: string;
@@ -21,6 +28,13 @@ export type Database = {
         Insert: {
           id: string;
           nome: string;
+          email?: string | null;
+          telefone?: string | null;
+          cargo?: string | null;
+          foto_url?: string | null;
+          sobre?: string | null;
+          mandato?: string | null;
+          exibir_publico?: boolean;
           role?: Database["public"]["Enums"]["profile_role"];
           ativo?: boolean;
           created_at?: string;
@@ -29,6 +43,13 @@ export type Database = {
         Update: {
           id?: string;
           nome?: string;
+          email?: string | null;
+          telefone?: string | null;
+          cargo?: string | null;
+          foto_url?: string | null;
+          sobre?: string | null;
+          mandato?: string | null;
+          exibir_publico?: boolean;
           role?: Database["public"]["Enums"]["profile_role"];
           ativo?: boolean;
           created_at?: string;

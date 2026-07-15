@@ -18,6 +18,7 @@ import {
   requireActiveAdminProfile,
   toggleCadastroAction,
   updateConselhoAction,
+  upsertConselheiroAction,
 } from "@/lib/admin/cadastros";
 
 export const dynamic = "force-dynamic";
@@ -188,6 +189,26 @@ export default async function CadastrosPage() {
                     placeholder="Email"
                   />
                   <Input
+                    name="whatsapp"
+                    defaultValue={conselho.whatsapp ?? ""}
+                    placeholder="WhatsApp"
+                  />
+                  <Input
+                    name="facebook_url"
+                    defaultValue={conselho.facebook_url ?? ""}
+                    placeholder="Facebook"
+                  />
+                  <Input
+                    name="instagram_url"
+                    defaultValue={conselho.instagram_url ?? ""}
+                    placeholder="Instagram"
+                  />
+                  <Input
+                    name="mapa_url"
+                    defaultValue={conselho.mapa_url ?? ""}
+                    placeholder="Link do mapa"
+                  />
+                  <Input
                     name="horario_atendimento"
                     defaultValue={conselho.horario_atendimento ?? ""}
                     placeholder="Horario de atendimento"
@@ -204,27 +225,50 @@ export default async function CadastrosPage() {
 
           <Card id="conselheiros" className="scroll-mt-6 rounded-lg">
             <CardHeader>
-              <CardTitle>Perfis administrativos</CardTitle>
+              <CardTitle>Conselheiros</CardTitle>
               <CardDescription>
-                Usuarios Auth devem ser criados no Supabase; aqui controlamos o
-                perfil ativo.
+                Crie o usuario no Supabase Auth e cadastre aqui o perfil publico
+                e administrativo usando o UID.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {profiles.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between gap-3 rounded-lg border bg-background p-3"
-                >
-                  <div>
-                    <p className="text-sm font-medium">{item.nome}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {item.role} · {item.ativo ? "Ativo" : "Inativo"}
-                    </p>
+            <CardContent className="space-y-4">
+              <form action={upsertConselheiroAction} className="grid gap-3">
+                <Input name="id" placeholder="UID do usuario no Supabase Auth" required />
+                <Input name="nome" placeholder="Nome do conselheiro" required />
+                <Input name="email" type="email" placeholder="Email" />
+                <Input name="telefone" placeholder="Telefone ou WhatsApp" />
+                <Input name="cargo" placeholder="Cargo" />
+                <Input name="mandato" placeholder="Mandato, exemplo: 2024-2028" />
+                <Input name="foto_url" placeholder="URL da foto" />
+                <Input name="sobre" placeholder="Resumo publico" />
+                <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    name="exibir_publico"
+                    value="true"
+                    className="size-4"
+                  />
+                  Exibir na area publica
+                </label>
+                <Button type="submit">Salvar conselheiro</Button>
+              </form>
+              <div className="space-y-2">
+                {profiles.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 rounded-lg border bg-background p-3"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">{item.nome}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {item.role} · {item.ativo ? "Ativo" : "Inativo"}
+                        {item.exibir_publico ? " · Publico" : ""}
+                      </p>
+                    </div>
+                    <ToggleForm table="profiles" id={item.id} ativo={item.ativo} />
                   </div>
-                  <ToggleForm table="profiles" id={item.id} ativo={item.ativo} />
-                </div>
-              ))}
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>

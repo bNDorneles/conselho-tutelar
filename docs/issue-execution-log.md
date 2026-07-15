@@ -416,3 +416,21 @@ Resultado:
 - Topos administrativos duplicados removidos das paginas principais.
 - Anchors de cadastros adicionadas para Conselheiros, Motivos, Medidas e Conselho.
 - Teste de navegacao administrativa adicionado.
+
+## Issue #21 - Gestao de conselheiros pelo superadmin
+
+Tipo da issue: fullstack/admin/security
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/21-conselheiros-management
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `profiles` expandida com email, telefone, cargo, foto, sobre, mandato e exibicao publica.
+- Cadastro de conselheiro adicionado em `/admin/cadastros`.
+- Conselheiros sao vinculados a usuarios ja existentes no Supabase Auth pelo UID.
+- Leitura publica permitida apenas para conselheiros ativos marcados como publicos.
+- Home publica exibe equipe do Conselho quando houver conselheiros publicos.
