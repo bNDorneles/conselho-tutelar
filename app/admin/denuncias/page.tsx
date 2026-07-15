@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireAdminProfile } from "@/lib/auth/admin";
+import { getConselheiroOptions } from "@/lib/admin/chamados";
 import {
   buildDenunciaStatusGroups,
   canTransitionDenunciaStatus,
@@ -36,8 +37,9 @@ type AdminDenunciasPageProps = {
 };
 
 const statusActions: Record<DenunciaStatus, DenunciaStatus[]> = {
-  recebida: ["em_analise"],
-  em_analise: ["recebida", "arquivada"],
+  recebida: ["atribuida"],
+  atribuida: ["em_analise", "recebida"],
+  em_analise: ["arquivada"],
   convertida_em_chamado: [],
   arquivada: ["em_analise"],
 };
@@ -62,9 +64,10 @@ export default async function AdminDenunciasPage({
   await requireAdminProfile();
   const params = (await searchParams) ?? {};
   const filters = parseDenunciaFilters(params);
-  const [denuncias, motivos] = await Promise.all([
+  const [denuncias, motivos, conselheiros] = await Promise.all([
     getAdminDenuncias(filters),
     getMotivosDenunciaOptions(),
+    getConselheiroOptions(),
   ]);
   const groups = buildDenunciaStatusGroups(denuncias);
   const errorMessage = getErrorMessage(params.error);
@@ -104,7 +107,7 @@ export default async function AdminDenunciasPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="grid gap-4 md:grid-cols-5">
+            <form className="grid gap-4 md:grid-cols-6">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <select
@@ -133,6 +136,22 @@ export default async function AdminDenunciasPage({
                   {motivos.map((motivo) => (
                     <option key={motivo.id} value={motivo.id}>
                       {motivo.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="conselheiro_id">Conselheiro</Label>
+                <select
+                  id="conselheiro_id"
+                  name="conselheiro_id"
+                  defaultValue={filters.conselheiroId ?? ""}
+                  className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <option value="">Todos</option>
+                  {conselheiros.map((conselheiro) => (
+                    <option key={conselheiro.id} value={conselheiro.id}>
+                      {conselheiro.nome}
                     </option>
                   ))}
                 </select>
@@ -203,6 +222,9 @@ export default async function AdminDenunciasPage({
                         <CardDescription className="leading-6">
                           {summarizeText(denuncia.relato, 120)}
                         </CardDescription>
+                        <p className="text-xs text-muted-foreground">
+                          Responsavel: {denuncia.profiles?.nome ?? "Nao atribuido"}
+                        </p>
                       </CardHeader>
                       <CardContent className="space-y-3 p-4 pt-0">
                         <Link

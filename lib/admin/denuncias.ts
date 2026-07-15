@@ -12,17 +12,22 @@ export type AdminDenuncia = DenunciaRow & {
   motivos_denuncia: {
     nome: string;
   } | null;
+  profiles: {
+    nome: string;
+  } | null;
 };
 
 export type DenunciaFilters = {
   status?: DenunciaStatus;
   motivoId?: string;
+  conselheiroId?: string;
   dataInicio?: string;
   dataFim?: string;
 };
 
 export const denunciaStatusColumns: DenunciaStatus[] = [
   "recebida",
+  "atribuida",
   "em_analise",
   "convertida_em_chamado",
   "arquivada",
@@ -30,14 +35,16 @@ export const denunciaStatusColumns: DenunciaStatus[] = [
 
 export const denunciaStatusLabels: Record<DenunciaStatus, string> = {
   recebida: "Recebida",
+  atribuida: "Atribuida",
   em_analise: "Em analise",
   convertida_em_chamado: "Convertida em chamado",
   arquivada: "Arquivada",
 };
 
 const allowedTransitions = new Set([
-  "recebida:em_analise",
-  "em_analise:recebida",
+  "recebida:atribuida",
+  "atribuida:em_analise",
+  "atribuida:recebida",
   "em_analise:arquivada",
   "arquivada:em_analise",
 ]);
@@ -71,6 +78,7 @@ export function parseDenunciaFilters(
 ): DenunciaFilters {
   const status = getSearchValue(input, "status");
   const motivoId = getSearchValue(input, "motivo_id");
+  const conselheiroId = getSearchValue(input, "conselheiro_id");
   const dataInicio = getSearchValue(input, "data_inicio");
   const dataFim = getSearchValue(input, "data_fim");
   const filters: DenunciaFilters = {};
@@ -81,6 +89,10 @@ export function parseDenunciaFilters(
 
   if (motivoId && uuidPattern.test(motivoId)) {
     filters.motivoId = motivoId;
+  }
+
+  if (conselheiroId && uuidPattern.test(conselheiroId)) {
+    filters.conselheiroId = conselheiroId;
   }
 
   if (dataInicio && datePattern.test(dataInicio)) {
@@ -97,6 +109,7 @@ export function parseDenunciaFilters(
 export function buildDenunciaStatusGroups(rows: AdminDenuncia[]) {
   const groups: Record<DenunciaStatus, AdminDenuncia[]> = {
     recebida: [],
+    atribuida: [],
     em_analise: [],
     convertida_em_chamado: [],
     arquivada: [],
@@ -107,6 +120,17 @@ export function buildDenunciaStatusGroups(rows: AdminDenuncia[]) {
   }
 
   return groups;
+}
+
+export function buildDenunciaAssignmentUpdate(conselheiroId: string) {
+  if (!uuidPattern.test(conselheiroId)) {
+    throw new Error("conselheiro invalido");
+  }
+
+  return {
+    conselheiro_responsavel_id: conselheiroId,
+    status: "atribuida" as const,
+  };
 }
 
 async function insertAuditLog(args: {
@@ -134,7 +158,7 @@ export async function getAdminDenuncias(filters: DenunciaFilters) {
   let query = supabase
     .from("denuncias")
     .select(
-      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,observacoes_internas,created_at,updated_at,motivos_denuncia(nome)"
+      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,vitima_nome_pai_informado,vitima_nome_mae_informado,vitima_escola_informada,vitima_genero_informado,conselheiro_responsavel_id,observacoes_internas,created_at,updated_at,motivos_denuncia(nome),profiles!denuncias_conselheiro_responsavel_id_fkey(nome)"
     )
     .order("created_at", { ascending: false });
 
@@ -144,6 +168,10 @@ export async function getAdminDenuncias(filters: DenunciaFilters) {
 
   if (filters.motivoId) {
     query = query.eq("motivo_id", filters.motivoId);
+  }
+
+  if (filters.conselheiroId) {
+    query = query.eq("conselheiro_responsavel_id", filters.conselheiroId);
   }
 
   if (filters.dataInicio) {
@@ -168,7 +196,7 @@ export async function getAdminDenunciaDetail(id: string) {
   const { data, error } = await supabase
     .from("denuncias")
     .select(
-      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,observacoes_internas,created_at,updated_at,motivos_denuncia(nome)"
+      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,vitima_nome_pai_informado,vitima_nome_mae_informado,vitima_escola_informada,vitima_genero_informado,conselheiro_responsavel_id,observacoes_internas,created_at,updated_at,motivos_denuncia(nome),profiles!denuncias_conselheiro_responsavel_id_fkey(nome)"
     )
     .eq("id", id)
     .maybeSingle();
@@ -178,6 +206,49 @@ export async function getAdminDenunciaDetail(id: string) {
   }
 
   return data as AdminDenuncia | null;
+}
+
+export async function assignDenunciaAction(formData: FormData) {
+  "use server";
+
+  const profile = await requireAdminProfile();
+  const denunciaId = String(formData.get("denuncia_id") ?? "");
+  const conselheiroId = String(formData.get("conselheiro_id") ?? "");
+
+  if (!uuidPattern.test(denunciaId)) {
+    redirect("/admin/denuncias?error=denuncia_invalida");
+  }
+
+  let payload: ReturnType<typeof buildDenunciaAssignmentUpdate>;
+
+  try {
+    payload = buildDenunciaAssignmentUpdate(conselheiroId);
+  } catch {
+    redirect(`/admin/denuncias/${denunciaId}?error=conselheiro_invalido`);
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase
+    .from("denuncias")
+    .update(payload)
+    .eq("id", denunciaId);
+
+  if (error) {
+    redirect(`/admin/denuncias/${denunciaId}?error=atribuicao_falhou`);
+  }
+
+  await insertAuditLog({
+    userId: profile.id,
+    action: "update",
+    entityId: denunciaId,
+    metadata: {
+      origem: "admin_denuncia_detail",
+      conselheiro_responsavel_id: conselheiroId,
+      status_novo: "atribuida",
+    },
+  });
+
+  redirect(`/admin/denuncias/${denunciaId}?success=denuncia_atribuida`);
 }
 
 export async function getMotivosDenunciaOptions() {

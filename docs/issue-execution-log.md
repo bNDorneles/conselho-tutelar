@@ -434,3 +434,22 @@ Resultado:
 - Conselheiros sao vinculados a usuarios ja existentes no Supabase Auth pelo UID.
 - Leitura publica permitida apenas para conselheiros ativos marcados como publicos.
 - Home publica exibe equipe do Conselho quando houver conselheiros publicos.
+
+## Issue #22 - Ajustar fluxo real da denuncia
+
+Tipo da issue: fullstack/business
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/22-denuncia-workflow
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Status `atribuida` adicionado ao fluxo de denuncias.
+- Denuncia agora pode ter `conselheiro_responsavel_id`.
+- Tela de detalhe permite atribuir denuncia a conselheiro.
+- Kanban/listagem mostra responsavel e permite filtro por conselheiro.
+- Criacao de chamado passa a exigir denuncia em analise.
+- Dados complementares da vitima sao carregados para a criacao do atendimento.

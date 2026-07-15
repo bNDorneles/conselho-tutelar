@@ -149,6 +149,7 @@ export type Database = {
           vitima_nome_mae_informado: string | null;
           vitima_escola_informada: string | null;
           vitima_genero_informado: string | null;
+          conselheiro_responsavel_id: string | null;
           observacoes_internas: string | null;
           created_at: string;
           updated_at: string;
@@ -166,6 +167,7 @@ export type Database = {
           vitima_nome_mae_informado?: string | null;
           vitima_escola_informada?: string | null;
           vitima_genero_informado?: string | null;
+          conselheiro_responsavel_id?: string | null;
           observacoes_internas?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -183,6 +185,7 @@ export type Database = {
           vitima_nome_mae_informado?: string | null;
           vitima_escola_informada?: string | null;
           vitima_genero_informado?: string | null;
+          conselheiro_responsavel_id?: string | null;
           observacoes_internas?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -193,6 +196,13 @@ export type Database = {
             columns: ["motivo_id"];
             isOneToOne: false;
             referencedRelation: "motivos_denuncia";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "denuncias_conselheiro_responsavel_id_fkey";
+            columns: ["conselheiro_responsavel_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];
@@ -435,6 +445,7 @@ export type Database = {
       profile_role: "conselheiro" | "admin";
       denuncia_status:
         | "recebida"
+        | "atribuida"
         | "em_analise"
         | "convertida_em_chamado"
         | "arquivada";

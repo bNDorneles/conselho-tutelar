@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { requireAdminProfile } from "@/lib/auth/admin";
 import {
+  assignDenunciaAction,
   denunciaStatusLabels,
   getAdminDenunciaDetail,
   recordDenunciaRead,
@@ -20,6 +21,7 @@ import {
 import {
   canCreateChamadoFromDenuncia,
   createChamadoFromDenunciaAction,
+  getConselheiroOptions,
 } from "@/lib/admin/chamados";
 import { formatDashboardDate } from "@/lib/admin/dashboard";
 
@@ -59,7 +61,10 @@ export default async function DenunciaDetailPage({
   const profile = await requireAdminProfile();
   const { id } = await params;
   const query = await searchParams;
-  const denuncia = await getAdminDenunciaDetail(id);
+  const [denuncia, conselheiros] = await Promise.all([
+    getAdminDenunciaDetail(id),
+    getConselheiroOptions(),
+  ]);
 
   if (!denuncia) {
     notFound();
@@ -126,6 +131,10 @@ export default async function DenunciaDetailPage({
                 value={denunciaStatusLabels[denuncia.status]}
               />
               <DetailItem
+                label="Conselheiro responsavel"
+                value={denuncia.profiles?.nome ?? null}
+              />
+              <DetailItem
                 label="Motivo"
                 value={denuncia.motivos_denuncia?.nome ?? null}
               />
@@ -137,6 +146,29 @@ export default async function DenunciaDetailPage({
                 label="Atualizada em"
                 value={formatDashboardDate(denuncia.updated_at)}
               />
+              <form action={assignDenunciaAction} className="space-y-2">
+                <input type="hidden" name="denuncia_id" value={denuncia.id} />
+                <label htmlFor="conselheiro_id" className="text-sm font-medium">
+                  Atribuir a conselheiro
+                </label>
+                <select
+                  id="conselheiro_id"
+                  name="conselheiro_id"
+                  defaultValue={denuncia.conselheiro_responsavel_id ?? ""}
+                  required
+                  className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <option value="">Selecione</option>
+                  {conselheiros.map((conselheiro) => (
+                    <option key={conselheiro.id} value={conselheiro.id}>
+                      {conselheiro.nome}
+                    </option>
+                  ))}
+                </select>
+                <Button type="submit" variant="outline" className="w-full">
+                  Atribuir denuncia
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </div>
@@ -192,6 +224,22 @@ export default async function DenunciaDetailPage({
             <DetailItem
               label="Endereco/local"
               value={denuncia.vitima_endereco_informado}
+            />
+            <DetailItem
+              label="Nome do pai"
+              value={denuncia.vitima_nome_pai_informado}
+            />
+            <DetailItem
+              label="Nome da mae"
+              value={denuncia.vitima_nome_mae_informado}
+            />
+            <DetailItem
+              label="Escola"
+              value={denuncia.vitima_escola_informada}
+            />
+            <DetailItem
+              label="Genero informado"
+              value={denuncia.vitima_genero_informado}
             />
             <DetailItem
               label="Observacoes internas"

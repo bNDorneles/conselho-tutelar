@@ -25,6 +25,7 @@ export const dynamic = "force-dynamic";
 
 const statusLabels = {
   recebida: "Recebida",
+  atribuida: "Atribuida",
   em_analise: "Em analise",
   convertida_em_chamado: "Convertida em chamado",
   arquivada: "Arquivada",

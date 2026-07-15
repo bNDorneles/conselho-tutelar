@@ -3,6 +3,7 @@ create extension if not exists pgcrypto;
 create type public.profile_role as enum ('conselheiro', 'admin');
 create type public.denuncia_status as enum (
   'recebida',
+  'atribuida',
   'em_analise',
   'convertida_em_chamado',
   'arquivada'
@@ -91,6 +92,7 @@ create table public.denuncias (
   vitima_nome_mae_informado text,
   vitima_escola_informada text,
   vitima_genero_informado text,
+  conselheiro_responsavel_id uuid references public.profiles(id) on delete set null,
   observacoes_internas text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -188,6 +190,8 @@ create index idx_motivos_denuncia_ativo on public.motivos_denuncia(ativo);
 
 create index idx_denuncias_status on public.denuncias(status);
 create index idx_denuncias_motivo_id on public.denuncias(motivo_id);
+create index idx_denuncias_conselheiro_responsavel_id
+  on public.denuncias(conselheiro_responsavel_id);
 create index idx_denuncias_created_at on public.denuncias(created_at desc);
 
 create index idx_vitimas_nome on public.vitimas(nome);
