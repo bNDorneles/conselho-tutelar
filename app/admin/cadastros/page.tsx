@@ -64,7 +64,10 @@ function CatalogEditor({
   const inactiveCount = items.length - activeCount;
 
   return (
-    <details className="rounded-lg border bg-background p-3" open={items.length <= 4}>
+    <details
+      className="rounded-lg border bg-background p-3"
+      open={items.length <= 4}
+    >
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
         <span className="text-sm font-semibold">{title}</span>
         <span className="text-xs text-muted-foreground">
@@ -74,27 +77,37 @@ function CatalogEditor({
       <div className="mt-3 space-y-3">
         {items.map((item) => (
           <div key={item.id} className="rounded-lg border bg-card p-3">
-            <form action={updateCatalogItemAction} className="grid gap-2">
-              <input type="hidden" name="table" value={table} />
-              <input type="hidden" name="id" value={item.id} />
-              <div className="grid gap-2 sm:grid-cols-[1fr_1.3fr_auto]">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0 space-y-1">
+                <p className="break-words text-sm font-semibold">{item.nome}</p>
+                <p className="break-words text-sm leading-6 text-muted-foreground">
+                  {item.descricao || "Sem descricao cadastrada."}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {item.ativo ? "Ativo" : "Inativo"}
+                </p>
+              </div>
+              <ToggleForm table={table} id={item.id} ativo={item.ativo} />
+            </div>
+            <details className="mt-3 rounded-lg border bg-background p-3">
+              <summary className="cursor-pointer list-none text-sm font-medium text-primary">
+                Editar nome e descricao
+              </summary>
+              <form action={updateCatalogItemAction} className="mt-3 grid gap-3">
+                <input type="hidden" name="table" value={table} />
+                <input type="hidden" name="id" value={item.id} />
                 <Input name="nome" defaultValue={item.nome} required />
-                <Input
+                <textarea
                   name="descricao"
                   defaultValue={item.descricao ?? ""}
                   placeholder="Descricao opcional"
+                  className="min-h-24 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
                 />
-                <Button type="submit" variant="outline" size="sm">
-                  Editar
+                <Button type="submit" size="sm" className="w-fit">
+                  Salvar alteracoes
                 </Button>
-              </div>
-            </form>
-            <div className="mt-2 flex items-center justify-between gap-3">
-              <p className="text-xs text-muted-foreground">
-                {item.ativo ? "Ativo" : "Inativo"}
-              </p>
-              <ToggleForm table={table} id={item.id} ativo={item.ativo} />
-            </div>
+              </form>
+            </details>
           </div>
         ))}
       </div>

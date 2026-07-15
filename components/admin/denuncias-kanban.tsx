@@ -59,6 +59,20 @@ function summarizeText(value: string, maxLength = 120) {
   return value.length > maxLength ? `${value.slice(0, maxLength)}...` : value;
 }
 
+function operationalStageToDenunciaStatus(
+  stage: OperationalStage,
+): DenunciaStatus | null {
+  if (stage === "recebida" || stage === "atribuida" || stage === "em_analise") {
+    return stage;
+  }
+
+  if (stage === "arquivada") {
+    return "arquivada";
+  }
+
+  return null;
+}
+
 function DroppableColumn({
   status,
   children,
@@ -71,7 +85,7 @@ function DroppableColumn({
   return (
     <section
       ref={setNodeRef}
-      className={`min-h-64 rounded-lg border bg-card transition-colors ${
+      className={`min-h-[430px] w-[280px] shrink-0 rounded-lg border bg-card transition-colors ${
         isOver ? "border-primary bg-primary/5" : ""
       }`}
     >
@@ -120,10 +134,12 @@ export function DenunciasKanban({
     const fromStatus = event.active.data.current?.status as
       | DenunciaStatus
       | undefined;
-    const toStatus = String(event.over?.id ?? "");
+    const toStage = String(event.over?.id ?? "") as OperationalStage;
+    const toStatus = operationalStageToDenunciaStatus(toStage);
 
     if (
       !fromStatus ||
+      !toStatus ||
       !isDenunciaStatus(toStatus) ||
       fromStatus === toStatus
     ) {
@@ -147,7 +163,13 @@ export function DenunciasKanban({
           Atualizando Kanban...
         </p>
       ) : null}
-      <div className="grid gap-4 xl:grid-cols-4 2xl:grid-cols-8">
+      <div className="mb-3 rounded-lg border bg-secondary/35 px-3 py-2 text-sm text-muted-foreground">
+        Arraste para o lado para acompanhar a esteira completa do atendimento.
+        As etapas de chamado, medida e encaminhamento sao atualizadas pelos
+        dados internos do atendimento.
+      </div>
+      <div className="overflow-x-auto pb-4">
+        <div className="flex min-w-max gap-4">
         {operationalStageColumns.map((status) => (
           <DroppableColumn key={status} status={status}>
             <div className="space-y-2 border-b px-4 py-3">
@@ -162,7 +184,7 @@ export function DenunciasKanban({
                   {groups[status].length}
                 </Badge>
               </div>
-              <p className="min-h-8 text-xs leading-4 text-muted-foreground">
+              <p className="min-h-10 text-xs leading-5 text-muted-foreground">
                 {operationalStageDescriptions[status]}
               </p>
             </div>
@@ -170,18 +192,21 @@ export function DenunciasKanban({
               {groups[status].length > 0 ? (
                 groups[status].map((denuncia) => (
                   <DraggableCard key={denuncia.id} denuncia={denuncia}>
-                    <Card className="rounded-lg">
+                    <Card className="rounded-lg shadow-sm">
                       <CardHeader className="space-y-2 p-4">
-                        <div className="flex items-center justify-between gap-3">
-                          <Badge variant="outline" className="rounded-lg">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className="max-w-full rounded-lg break-words"
+                          >
                             {denuncia.motivos_denuncia?.nome ?? "Sem motivo"}
                           </Badge>
                           <span className="text-xs text-muted-foreground">
                             {formatDashboardDate(denuncia.created_at)}
                           </span>
                         </div>
-                        <CardDescription className="leading-6">
-                          {summarizeText(denuncia.relato, 120)}
+                        <CardDescription className="break-words leading-6">
+                          {summarizeText(denuncia.relato, 90)}
                         </CardDescription>
                         <p className="text-xs text-muted-foreground">
                           Responsavel:{" "}
@@ -239,7 +264,7 @@ export function DenunciasKanban({
                                     type="submit"
                                     variant="outline"
                                     size="sm"
-                                    className="w-full"
+                                    className="h-auto min-h-8 w-full whitespace-normal"
                                   >
                                     Mover para{" "}
                                     {denunciaStatusLabels[nextStatus]}
@@ -261,6 +286,7 @@ export function DenunciasKanban({
             </div>
           </DroppableColumn>
         ))}
+        </div>
       </div>
     </DndContext>
   );

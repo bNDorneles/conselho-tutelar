@@ -128,3 +128,25 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: #102027 !important;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  * {
+    box-shadow: none !important;
+  }
+}
