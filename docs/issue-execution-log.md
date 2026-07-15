@@ -622,3 +622,25 @@ Resultado:
 - Sidebar administrativa foi escondida na impressao para nao sair no PDF.
 - CSS de impressao global ajustado para A4, margens e visual limpo.
 - Rotulos tecnicos dos relatorios foram convertidos para texto final amigavel.
+
+## Issue #34 - Recuperacao de senha dos conselheiros
+
+Tipo da issue: auth/ux
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/34-recuperacao-senha-supabase
+Comandos de verificacao executados:
+- npm.cmd run test -- lib/auth/password-reset.test.ts
+- npm.cmd test
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Login administrativo ganhou link `Esqueci minha senha`.
+- Tela `/login/recuperar-senha` criada para solicitar e-mail de recuperacao.
+- Server Action integrada ao `supabase.auth.resetPasswordForEmail`.
+- Tela `/login/redefinir-senha` criada para salvar uma nova senha.
+- Server Action troca o `code` do link por sessao e chama `supabase.auth.updateUser`.
+- Login mostra mensagem de sucesso apos senha atualizada.
+- Helpers testados para e-mail, URL de redirect e validacao de nova senha.
+- Para producao, cadastrar a URL `/login/redefinir-senha` nos redirects permitidos do Supabase Auth.
