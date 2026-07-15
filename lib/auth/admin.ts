@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { Database } from "@/lib/supabase/database.types";
+import { createServerSupabaseClient } from "../supabase/server";
+import type { Database } from "../supabase/database.types";
 
 export type AdminProfile =
   Database["public"]["Tables"]["profiles"]["Row"];

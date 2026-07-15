@@ -125,7 +125,15 @@ export default async function AdminPage() {
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <Card className="rounded-lg">
             <CardHeader>
-              <CardTitle>Denuncias recentes</CardTitle>
+              <div className="flex items-center justify-between gap-3">
+                <CardTitle>Denuncias recentes</CardTitle>
+                <Link
+                  href="/admin/denuncias"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Ver Kanban
+                </Link>
+              </div>
               <CardDescription>
                 Ultimos relatos recebidos pelo formulario anonimo.
               </CardDescription>

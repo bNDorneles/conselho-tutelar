@@ -201,4 +201,27 @@ Resultado:
 - Listas de denuncias recentes e chamados recentes criadas.
 - Helpers e testes adicionados em `lib/admin/dashboard.ts`.
 
+## Issue #10 - Implementar listagem e detalhe de denuncias
+
+Tipo da issue: fullstack/security
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/10-denuncias-kanban-detail
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/seguranca-lgpd.md
+- docs/superpowers/specs/2026-07-14-issue-10-denuncias-kanban-detail-design.md
+- docs/superpowers/plans/2026-07-14-issue-10-denuncias-kanban-detail.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `/admin/denuncias` criado com visao Kanban por status.
+- Filtros por status, motivo e periodo criados.
+- Mudanca de status permitida para movimentos de triagem da Issue #10.
+- `/admin/denuncias/[id]` criado para detalhe protegido da denuncia.
+- Auditoria de leitura e mudanca de status registrada em `audit_logs`.
 

@@ -334,10 +334,12 @@ Ja existem:
 - Formulario publico em `/denuncia`.
 - Confirmacao publica em `/denuncia/enviada`.
 - Dashboard administrativo com indicadores e listas recentes em `/admin`.
+- Kanban de triagem em `/admin/denuncias`.
+- Detalhe protegido de denuncia em `/admin/denuncias/[id]`.
+- Auditoria de leitura e mudanca de status para denuncias.
 
 Ainda nao existem:
 
-- Listagem detalhada de denuncias.
 - Conversao de denuncia em chamado.
 - Tela de chamados.
 - Deploy.

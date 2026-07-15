@@ -58,17 +58,17 @@ O estilo deve seguir a identidade clara e tranquila ja definida: fundo acolhedor
 
 Ao abrir detalhe:
 
-- `user_id`: perfil autenticado;
+- `actor_id`: perfil autenticado;
 - `action`: `read`;
-- `entity`: `denuncias`;
+- `entity_table`: `denuncias`;
 - `entity_id`: id da denuncia;
 - `metadata`: origem `admin_denuncia_detail`.
 
 Ao mudar status:
 
-- `user_id`: perfil autenticado;
+- `actor_id`: perfil autenticado;
 - `action`: `status_change`;
-- `entity`: `denuncias`;
+- `entity_table`: `denuncias`;
 - `entity_id`: id da denuncia;
 - `metadata`: status anterior, status novo e origem `admin_denuncias_kanban`.
 
