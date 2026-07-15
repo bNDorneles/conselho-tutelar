@@ -199,6 +199,17 @@ A interface deve ser:
 - Responsiva.
 - Diferente de template Bootstrap generico.
 
+Paleta aprovada:
+
+- Fundo claro/off-white quente.
+- Primaria verde/teal serena.
+- Secundaria azul suave.
+- Acento pessego/amarelo discreto.
+- Texto cinza-azulado escuro.
+- Experiencia publica prioritariamente clara, tranquila e nao intimidante.
+
+Evite dark mode como experiencia principal da area publica neste momento.
+
 Use componentes como:
 
 - Cards de indicadores.
@@ -296,20 +307,48 @@ Toda entrega deve:
 
 ## Estado Atual Do Projeto
 
-No momento, o repositorio esta em fase de planejamento/documentacao. O projeto Next.js ainda sera inicializado pela Issue #1.
+No momento, o repositorio tem a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2, a configuracao inicial Supabase criada pela Issue #3 e o schema inicial Supabase criado pela Issue #4.
 
 Ja existem:
 
 - Documentos de contexto.
 - Especificacao inicial.
+- Plano das Issues #1 e #2.
+- Plano da Issue #3.
 - Backlog em `docs/github-issues.md`.
 - Issues abertas no GitHub.
+- Codigo inicial Next.js com TypeScript, ESLint, Tailwind CSS e App Router.
+- shadcn/ui configurado.
+- Pagina publica inicial em `/`.
+- Base visual administrativa em `/admin`.
+- Helpers Supabase em `lib/supabase/`.
+- `.env.local.example` com variaveis publicas do Supabase.
+- Testes Vitest para validacao da configuracao Supabase.
+- Migration inicial em `supabase/migrations/20260714000100_create_initial_schema.sql`.
+- Seed seguro em `supabase/seed.sql`.
+- Tipos iniciais do banco em `lib/supabase/database.types.ts`.
+- Tela `/login`.
+- Protecao server-side inicial de `/admin`.
+- Server Actions de login/logout.
+- Migration de RLS e policies em `supabase/migrations/20260714000200_enable_rls_policies.sql`.
+- Formulario publico em `/denuncia`.
+- Confirmacao publica em `/denuncia/enviada`.
+- Dashboard administrativo com indicadores e listas recentes em `/admin`.
+- Kanban de triagem em `/admin/denuncias`.
+- Detalhe protegido de denuncia em `/admin/denuncias/[id]`.
+- Auditoria de leitura e mudanca de status para denuncias.
+- Criacao de chamado a partir do detalhe da denuncia.
+- Criacao opcional de vitima quando a denuncia tiver dados informados.
+- Listagem de chamados em `/admin/chamados`.
+- Detalhe protegido de chamado em `/admin/chamados/[id]`.
+- Alteracao auditada de status de chamados.
+- Registro de encaminhamentos no detalhe do chamado.
+- Historico/timeline de encaminhamentos por chamado.
+- Cadastros auxiliares admin-only em `/admin/cadastros`.
+- Relatorios basicos em `/admin/relatorios`.
 
 Ainda nao existem:
 
-- Codigo Next.js.
-- Projeto Supabase configurado.
-- Schema aplicado.
 - Deploy.
 
 ## Decisao Arquitetural Importante
