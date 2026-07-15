@@ -80,6 +80,10 @@ create table public.denuncias (
   vitima_nome_informado text,
   vitima_idade_informada integer,
   vitima_endereco_informado text,
+  vitima_nome_pai_informado text,
+  vitima_nome_mae_informado text,
+  vitima_escola_informada text,
+  vitima_genero_informado text,
   observacoes_internas text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -87,6 +91,15 @@ create table public.denuncias (
   constraint denuncias_vitima_idade_range check (
     vitima_idade_informada is null
     or vitima_idade_informada between 0 and 17
+  ),
+  constraint denuncias_vitima_genero_check check (
+    vitima_genero_informado is null
+    or vitima_genero_informado in (
+      'feminino',
+      'masculino',
+      'outro',
+      'nao_informado'
+    )
   )
 );
 
