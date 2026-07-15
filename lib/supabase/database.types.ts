@@ -46,6 +46,10 @@ export type Database = {
           telefone: string | null;
           email: string | null;
           horario_atendimento: string | null;
+          whatsapp: string | null;
+          facebook_url: string | null;
+          instagram_url: string | null;
+          mapa_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -58,6 +62,10 @@ export type Database = {
           telefone?: string | null;
           email?: string | null;
           horario_atendimento?: string | null;
+          whatsapp?: string | null;
+          facebook_url?: string | null;
+          instagram_url?: string | null;
+          mapa_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -70,6 +78,10 @@ export type Database = {
           telefone?: string | null;
           email?: string | null;
           horario_atendimento?: string | null;
+          whatsapp?: string | null;
+          facebook_url?: string | null;
+          instagram_url?: string | null;
+          mapa_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
