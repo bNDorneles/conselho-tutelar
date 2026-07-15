@@ -66,6 +66,30 @@ export function parseReportCategories(
   return selected.length > 0 ? selected : reportCategories;
 }
 
+export function buildReportExportQuery({
+  filters,
+  categories,
+}: {
+  filters: ReportFilters;
+  categories: ReportCategory[];
+}) {
+  const params = new URLSearchParams();
+
+  if (filters.dataInicio) {
+    params.set("data_inicio", filters.dataInicio);
+  }
+
+  if (filters.dataFim) {
+    params.set("data_fim", filters.dataFim);
+  }
+
+  for (const category of categories) {
+    params.append("categorias", category);
+  }
+
+  return params.toString();
+}
+
 export function countByLabel(rows: Array<{ label: string | null | undefined }>) {
   const counts = new Map<string, number>();
 

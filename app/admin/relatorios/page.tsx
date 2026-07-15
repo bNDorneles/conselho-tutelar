@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { BarChart3, ClipboardList, FileWarning, Route } from "lucide-react";
+import {
+  BarChart3,
+  ClipboardList,
+  Download,
+  FileWarning,
+  Route,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireAdminProfile } from "@/lib/auth/admin";
 import {
+  buildReportExportQuery,
   calculatePercent,
   getAdminReportsData,
   parseReportCategories,
@@ -79,20 +86,20 @@ function RankingCard({
               </div>
             </div>
           ) : (
-          items.map((item) => (
-            <div key={item.label} className="space-y-1">
-              <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="font-medium">{item.label}</span>
-                <span className="text-muted-foreground">{item.total}</span>
+            items.map((item) => (
+              <div key={item.label} className="space-y-1">
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-medium">{item.label}</span>
+                  <span className="text-muted-foreground">{item.total}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-secondary">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${calculatePercent(item.total, max)}%` }}
+                  />
+                </div>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${calculatePercent(item.total, max)}%` }}
-                />
-              </div>
-            </div>
-          ))
+            ))
           )
         ) : (
           <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
@@ -148,6 +155,13 @@ export default async function RelatoriosPage({
   const selectedCategories = parseReportCategories(params);
   const data = await getAdminReportsData(filters);
   const areaAccent = getAreaAccent("relatorios");
+  const exportQuery = buildReportExportQuery({
+    filters,
+    categories: selectedCategories,
+  });
+  const exportHref = `/admin/relatorios/exportar${
+    exportQuery ? `?${exportQuery}` : ""
+  }`;
   const cards = [
     {
       title: "Denuncias",
@@ -252,6 +266,15 @@ export default async function RelatoriosPage({
                   </label>
                 ))}
               </fieldset>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={exportHref}
+                  className="inline-flex h-8 items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
+                >
+                  <Download className="mr-2 size-4" aria-hidden="true" />
+                  Exportar PDF
+                </Link>
+              </div>
             </form>
           </CardContent>
         </Card>
