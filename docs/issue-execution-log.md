@@ -379,3 +379,21 @@ Resultado:
 - Migration adicionada para novos campos de denuncia.
 - Tipos Supabase atualizados.
 - Testes adicionados para validacao e payload do formulario.
+
+## Issue #19 - Completar catalogos do TCC antigo
+
+Tipo da issue: database/admin
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/19-catalogos-tcc-antigo
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Motivos de denuncia do TCC antigo normalizados no seed.
+- Medidas protetivas do TCC antigo normalizadas no seed.
+- Migration idempotente criada para atualizar bancos existentes.
+- Upserts passaram a usar `on conflict (nome) do update`.
+- Testes estaticos adicionados para proteger catalogos obrigatorios e evitar duplicacoes.
