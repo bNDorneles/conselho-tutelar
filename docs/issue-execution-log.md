@@ -178,5 +178,27 @@ Resultado:
 - Server Action de envio criada em `lib/denuncias/actions.ts`.
 - Home atualizada com CTA para denuncia anonima.
 
+## Issue #9 - Criar dashboard administrativo
+
+Tipo da issue: fullstack/ui
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/09-admin-dashboard
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/seguranca-lgpd.md
+- docs/superpowers/specs/2026-07-14-denuncia-dashboard-design.md
+- docs/superpowers/plans/2026-07-14-issues-08-09-denuncia-dashboard.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `/admin` atualizado para usar dados reais do Supabase.
+- Indicadores de denuncias totais e chamados por status criados.
+- Listas de denuncias recentes e chamados recentes criadas.
+- Helpers e testes adicionados em `lib/admin/dashboard.ts`.
 
 

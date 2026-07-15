@@ -333,12 +333,13 @@ Ja existem:
 - Migration de RLS e policies em `supabase/migrations/20260714000200_enable_rls_policies.sql`.
 - Formulario publico em `/denuncia`.
 - Confirmacao publica em `/denuncia/enviada`.
+- Dashboard administrativo com indicadores e listas recentes em `/admin`.
 
 Ainda nao existem:
 
-- Projeto Supabase real conectado com credenciais locais.
-- Schema aplicado em ambiente Supabase local/remoto.
-- Dashboard administrativo com dados reais.
+- Listagem detalhada de denuncias.
+- Conversao de denuncia em chamado.
+- Tela de chamados.
 - Deploy.
 
 ## Decisao Arquitetural Importante
