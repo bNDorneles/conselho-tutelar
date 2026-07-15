@@ -29,6 +29,7 @@ Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, c
 ## Estrutura Inicial
 
 - `/`: base publica institucional.
+- `/denuncia`: formulario publico de denuncia anonima.
 - `/login`: acesso administrativo via Supabase Auth.
 - `/admin`: painel administrativo protegido por login e profile ativo.
 - `components/ui/`: componentes shadcn/ui adicionados para a fundacao visual.

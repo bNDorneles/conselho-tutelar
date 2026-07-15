@@ -93,13 +93,13 @@ export default function Home() {
               acompanhamento interno de denuncias, chamados e encaminhamentos.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#quando-denunciar"
+              <Link
+                href="/denuncia"
                 className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/85"
               >
-                Entender o fluxo
+                Fazer denuncia anonima
                 <ArrowRight className="size-4" aria-hidden="true" />
-              </a>
+              </Link>
               <Link
                 href="/admin"
                 className="inline-flex h-10 items-center justify-center rounded-lg border bg-card px-4 text-sm font-medium transition-colors hover:bg-muted"
@@ -179,9 +179,8 @@ export default function Home() {
             </Badge>
             <h2 className="text-2xl font-semibold">Denuncia anonima</h2>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              O formulario publico sera implementado depois da configuracao do
-              Supabase, para garantir validacao e gravacao seguras desde o
-              inicio.
+              O formulario publico ja recebe relatos anonimos com validacao e
+              gravacao segura no Supabase.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">

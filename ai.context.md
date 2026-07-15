@@ -331,12 +331,14 @@ Ja existem:
 - Protecao server-side inicial de `/admin`.
 - Server Actions de login/logout.
 - Migration de RLS e policies em `supabase/migrations/20260714000200_enable_rls_policies.sql`.
+- Formulario publico em `/denuncia`.
+- Confirmacao publica em `/denuncia/enviada`.
 
 Ainda nao existem:
 
 - Projeto Supabase real conectado com credenciais locais.
 - Schema aplicado em ambiente Supabase local/remoto.
-- Formulario real de denuncia.
+- Dashboard administrativo com dados reais.
 - Deploy.
 
 ## Decisao Arquitetural Importante

@@ -154,5 +154,29 @@ Resultado:
 - Manutencao de catalogos e dados institucionais depende de `public.is_active_admin()`.
 - Teste estatico criado em `supabase/rls.test.ts`.
 
+## Issue #8 - Criar formulario de denuncia anonima
+
+Tipo da issue: fullstack/security
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/08-anonymous-complaint-form
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/seguranca-lgpd.md
+- docs/superpowers/specs/2026-07-14-denuncia-dashboard-design.md
+- docs/superpowers/plans/2026-07-14-issues-08-09-denuncia-dashboard.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `/denuncia` criado.
+- `/denuncia/enviada` criado.
+- Validacao Zod criada em `lib/denuncias/validation.ts`.
+- Server Action de envio criada em `lib/denuncias/actions.ts`.
+- Home atualizada com CTA para denuncia anonima.
+
 
 
