@@ -7,7 +7,6 @@ import {
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,7 +15,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { requireAdminProfile } from "@/lib/auth/admin";
-import { signOutAction } from "@/lib/auth/actions";
 import {
   formatDashboardDate,
   getAdminDashboardData,
@@ -27,6 +25,7 @@ export const dynamic = "force-dynamic";
 
 const statusLabels = {
   recebida: "Recebida",
+  atribuida: "Atribuida",
   em_analise: "Em analise",
   convertida_em_chamado: "Convertida em chamado",
   arquivada: "Arquivada",
@@ -67,24 +66,6 @@ export default async function AdminPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4">
-          <Link href="/" className="text-sm font-semibold">
-            Conselho Tutelar
-          </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
-              {profile.role}
-            </Badge>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm">
-                Sair
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto w-full max-w-6xl px-5 py-10">
         <div className="mb-8 max-w-3xl">
           <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">

@@ -5,12 +5,50 @@ export type ReportFilters = {
   dataFim?: string;
 };
 
+export type ReportCategory =
+  | "denuncias_por_motivo"
+  | "chamados_por_status"
+  | "chamados_por_conselheiro"
+  | "encaminhamentos_por_periodo"
+  | "medidas_mais_aplicadas";
+
 export type CountItem = {
   label: string;
   total: number;
 };
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+export const reportCategories: ReportCategory[] = [
+  "denuncias_por_motivo",
+  "chamados_por_status",
+  "chamados_por_conselheiro",
+  "encaminhamentos_por_periodo",
+  "medidas_mais_aplicadas",
+];
+
+export const reportCategoryLabels: Record<ReportCategory, string> = {
+  denuncias_por_motivo: "Denuncias por motivo",
+  chamados_por_status: "Chamados por status",
+  chamados_por_conselheiro: "Chamados por conselheiro",
+  encaminhamentos_por_periodo: "Encaminhamentos por periodo",
+  medidas_mais_aplicadas: "Medidas protetivas",
+};
+
+const reportStatusLabels: Record<string, string> = {
+  aberto: "Aberto",
+  em_atendimento: "Em atendimento",
+  finalizado: "Finalizado",
+};
+
+export function formatReportLabel(value: string | null | undefined) {
+  const label = value?.trim();
+
+  if (!label) {
+    return "Nao informado";
+  }
+
+  return reportStatusLabels[label] ?? label;
+}
 
 export function parseReportFilters(
   input: Record<string, string | string[] | undefined>
@@ -30,6 +68,42 @@ export function parseReportFilters(
   }
 
   return filters;
+}
+
+export function parseReportCategories(
+  input: Record<string, string | string[] | undefined>,
+): ReportCategory[] {
+  const raw = input.categorias;
+  const values = Array.isArray(raw) ? raw : raw ? [raw] : [];
+  const selected = values.filter((value): value is ReportCategory =>
+    reportCategories.includes(value as ReportCategory),
+  );
+
+  return selected.length > 0 ? selected : reportCategories;
+}
+
+export function buildReportExportQuery({
+  filters,
+  categories,
+}: {
+  filters: ReportFilters;
+  categories: ReportCategory[];
+}) {
+  const params = new URLSearchParams();
+
+  if (filters.dataInicio) {
+    params.set("data_inicio", filters.dataInicio);
+  }
+
+  if (filters.dataFim) {
+    params.set("data_fim", filters.dataFim);
+  }
+
+  for (const category of categories) {
+    params.append("categorias", category);
+  }
+
+  return params.toString();
 }
 
 export function countByLabel(rows: Array<{ label: string | null | undefined }>) {
@@ -122,7 +196,7 @@ export async function getAdminReportsData(filters: ReportFilters) {
     ),
     chamadosPorStatus: countByLabel(
       chamadosRows.map((row) => ({
-        label: row.status,
+        label: formatReportLabel(row.status),
       }))
     ),
     chamadosPorConselheiro: countByLabel(

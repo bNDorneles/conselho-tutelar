@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildReportExportQuery,
   calculatePercent,
   countByLabel,
+  formatReportLabel,
+  parseReportCategories,
   parseReportFilters,
 } from "./relatorios";
 
@@ -44,5 +47,42 @@ describe("relatorios helpers", () => {
   it("calculates bar percentages safely", () => {
     expect(calculatePercent(2, 4)).toBe(50);
     expect(calculatePercent(2, 0)).toBe(0);
+  });
+
+  it("formats technical report labels for final documents", () => {
+    expect(formatReportLabel("em_atendimento")).toBe("Em atendimento");
+    expect(formatReportLabel("finalizado")).toBe("Finalizado");
+    expect(formatReportLabel(null)).toBe("Nao informado");
+  });
+
+  it("parses selected report categories with defaults and invalid values ignored", () => {
+    expect(parseReportCategories({})).toEqual([
+      "denuncias_por_motivo",
+      "chamados_por_status",
+      "chamados_por_conselheiro",
+      "encaminhamentos_por_periodo",
+      "medidas_mais_aplicadas",
+    ]);
+
+    expect(
+      parseReportCategories({
+        categorias: [
+          "denuncias_por_motivo",
+          "invalida",
+          "medidas_mais_aplicadas",
+        ],
+      }),
+    ).toEqual(["denuncias_por_motivo", "medidas_mais_aplicadas"]);
+  });
+
+  it("builds export query preserving period and selected categories", () => {
+    expect(
+      buildReportExportQuery({
+        filters: { dataInicio: "2026-07-01", dataFim: "2026-07-31" },
+        categories: ["denuncias_por_motivo", "chamados_por_status"],
+      }),
+    ).toBe(
+      "data_inicio=2026-07-01&data_fim=2026-07-31&categorias=denuncias_por_motivo&categorias=chamados_por_status",
+    );
   });
 });

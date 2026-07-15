@@ -91,5 +91,51 @@ describe("initial Supabase seed", () => {
     expect(sql).not.toContain("insert into public.vitimas");
     expect(sql).not.toContain("insert into public.chamados");
   });
+
+  it("includes normalized complaint reasons from the legacy TCC", () => {
+    const sql = readSql(seedPath);
+
+    for (const reason of [
+      "desaparecimento/fuga",
+      "abuso sexual",
+      "exploracao do trabalho infantil",
+      "bullying",
+      "maus tratos",
+      "alienacao parental",
+      "ato infracional",
+      "conflito familiar",
+      "comportamento depressivo e suicida",
+      "responsaveis usuarios ou dependentes",
+    ]) {
+      expect(sql).toContain(reason);
+    }
+  });
+
+  it("includes normalized protective measures from the legacy TCC", () => {
+    const sql = readSql(seedPath);
+
+    for (const measure of [
+      "pedido de certidao de nascimento",
+      "pedido de historico escolar",
+      "acompanhamento familiar",
+      "termo de responsabilidade",
+      "encaminhamento psicologico",
+      "encaminhamento ao creas",
+      "encaminhamento ao cras",
+      "encaminhamento caps ad",
+      "encaminhamento a defensoria",
+      "acolhimento institucional",
+    ]) {
+      expect(sql).toContain(measure);
+    }
+  });
+
+  it("uses idempotent catalog upserts instead of duplicated catalog rows", () => {
+    const sql = readSql(seedPath);
+
+    expect(sql).toContain("on conflict (nome) do update");
+    expect(sql.match(/acolhimento institucional/g)).toHaveLength(1);
+    expect(sql.match(/pedido de vaga escolar/g)).toHaveLength(1);
+  });
 });
 

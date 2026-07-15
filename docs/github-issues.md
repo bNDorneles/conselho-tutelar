@@ -329,7 +329,7 @@ Politica de modelos:
 - Apenas admin acessa manutencoes sensiveis.
 - Cadastros aparecem nos formularios correspondentes.
 
-## Milestone 6 - Relatorios, Deploy E Fechamento
+## Milestone 6 - Relatorios E Deploy Inicial
 
 ### Issue 15 - Implementar relatorios basicos
 
@@ -373,7 +373,184 @@ Politica de modelos:
 - Build passa.
 - README explica como configurar.
 
-### Issue 17 - Revisao final de seguranca e LGPD
+## Milestone 7 - Produto Real E Fluxo Do Conselho
+
+### Issue 17 - Revisar home publica e linguagem institucional
+
+**Tipo:** frontend/content
+
+**Modelo recomendado:** `gpt-5.6-terra`
+
+**Objetivo:** Transformar a area publica em uma interface de produto real, acolhedora e institucional.
+
+**Escopo:**
+
+- Remover textos tecnicos e mensagens de MVP da home.
+- Exibir dados do Conselho Tutelar: localizacao, telefone, e-mail, WhatsApp, Facebook e Instagram.
+- Criar secoes publicas uteis: quando procurar o Conselho, canais de atendimento, equipe e denuncia anonima.
+- Manter tom acolhedor, seguro e nao tecnico.
+- Usar dados reais ou editaveis vindos da tabela `conselho_tutelar` quando disponiveis.
+
+**Criterios de aceite:**
+
+- Home nao menciona Supabase, RLS, MVP ou implementacao interna.
+- Contatos institucionais aparecem de forma clara.
+- Area publica parece uma entrega real para cidadaos.
+
+### Issue 18 - Expandir formulario publico de denuncia
+
+**Tipo:** fullstack/security
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Objetivo:** Coletar informacoes suficientes para triagem real sem perder o carater anonimo da denuncia.
+
+**Escopo:**
+
+- Adicionar campos inspirados no TCC antigo: nome da vitima, nome do pai, nome da mae, endereco, escola, idade e genero.
+- Manter motivo da denuncia, local da ocorrencia e relato detalhado.
+- Ajustar migration, tipos Supabase, validacao Zod e Server Action.
+- Melhorar textos do formulario para orientar o denunciante.
+- Preservar bloqueio de leitura publica e insert anonimo controlado.
+
+**Criterios de aceite:**
+
+- Denuncia salva todos os campos necessarios para analise inicial.
+- Campos obrigatorios e opcionais sao validados.
+- Formulario continua anonimo e sem consulta publica posterior.
+
+### Issue 19 - Completar catalogos do TCC antigo
+
+**Tipo:** database/admin
+
+**Modelo recomendado:** `gpt-5.6-sol`
+
+**Objetivo:** Trazer motivos de denuncia e medidas protetivas do TCC antigo para o novo sistema.
+
+**Escopo:**
+
+- Revisar motivos de denuncia do SQL antigo.
+- Revisar medidas protetivas do SQL antigo.
+- Normalizar nomes, remover duplicados e corrigir quebras de texto.
+- Atualizar seeds/migrations.
+- Garantir que catalogos aparecam nos formularios e telas administrativas.
+
+**Criterios de aceite:**
+
+- Motivos e medidas cobrem os dados do TCC antigo.
+- Itens duplicados ou quebrados nao aparecem na interface.
+- Seeds podem ser reaplicados sem criar duplicacao.
+
+### Issue 20 - Criar layout administrativo com sidebar
+
+**Tipo:** frontend/admin-ui
+
+**Modelo recomendado:** `gpt-5.6-terra`
+
+**Objetivo:** Melhorar a navegacao administrativa com uma sidebar inspirada no projeto antigo.
+
+**Escopo:**
+
+- Criar layout compartilhado para rotas `/admin`.
+- Adicionar sidebar com links para Dashboard, Denuncias, Chamados, Conselheiros, Motivos, Medidas, Conselho, Relatorios e Sair.
+- Destacar rota ativa.
+- Manter layout responsivo.
+- Reaproveitar componentes e tokens visuais atuais.
+
+**Criterios de aceite:**
+
+- Todas as telas administrativas principais usam a sidebar.
+- Conselheiro/admin navega sem depender de links soltos em cada tela.
+- Logout e retorno para area publica ficam acessiveis.
+
+## Milestone 8 - Fluxo Operacional E Fechamento
+
+### Issue 21 - Gestao de conselheiros pelo superadmin
+
+**Tipo:** fullstack/admin/security
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Objetivo:** Permitir que o superadmin gerencie conselheiros e a exibicao publica da equipe.
+
+**Escopo:**
+
+- Criar/editar perfis de conselheiros.
+- Campos: nome, e-mail, telefone, foto, sobre, mandato/cargo, ativo e exibir na area publica.
+- Integrar com Supabase Auth de forma segura.
+- Exibir conselheiros ativos na area publica.
+
+**Criterios de aceite:**
+
+- Admin consegue manter conselheiros.
+- Conselheiros ativos aparecem na area publica quando marcados para exibicao.
+- Usuarios sem permissao nao acessam o cadastro.
+
+### Issue 22 - Ajustar fluxo real da denuncia
+
+**Tipo:** fullstack/business
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Objetivo:** Representar o fluxo denuncia -> atribuicao -> analise -> chamado.
+
+**Escopo:**
+
+- Adicionar atribuicao de denuncia a conselheiro.
+- Ajustar status da denuncia para refletir recebida, atribuida, em analise, convertida ou arquivada.
+- Registrar auditoria de atribuicao e mudanca de status.
+- Permitir decisao de procedencia antes de criar chamado.
+
+**Criterios de aceite:**
+
+- Denuncia pode ser atribuida a um conselheiro.
+- Conselheiro acompanha sua fila de analise.
+- Criacao de chamado respeita o fluxo de triagem.
+
+### Issue 23 - Implementar Kanban com arrastar e soltar
+
+**Tipo:** frontend/fullstack
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Objetivo:** Permitir movimentar denuncias entre etapas do Kanban por drag and drop.
+
+**Escopo:**
+
+- Usar biblioteca solida para drag and drop, preferencialmente `@dnd-kit`.
+- Atualizar status ao soltar card em outra coluna.
+- Manter botoes alternativos para acessibilidade.
+- Registrar auditoria da movimentacao.
+
+**Criterios de aceite:**
+
+- Card pode ser arrastado entre colunas.
+- Mudanca persiste no Supabase.
+- Interface continua funcional por teclado/botoes.
+
+### Issue 24 - Evoluir chamados, medidas e encaminhamentos
+
+**Tipo:** fullstack/business
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Objetivo:** Completar o acompanhamento do chamado com medidas protetivas e relato do conselheiro.
+
+**Escopo:**
+
+- Permitir revisar dados vindos da denuncia ao abrir chamado.
+- Criar vinculo explicito entre chamado e medida protetiva.
+- Registrar relato do conselheiro sobre o que foi feito.
+- Melhorar timeline do chamado.
+- Separar medida aplicada de encaminhamento realizado quando necessario.
+
+**Criterios de aceite:**
+
+- Chamado possui medidas protetivas aplicadas.
+- Encaminhamento registra relato do conselheiro e destino.
+- Historico do chamado fica compreensivel.
+
+### Issue 25 - Revisao final de seguranca e LGPD
 
 **Tipo:** security/lgpd
 
@@ -394,3 +571,155 @@ Politica de modelos:
 - Nenhuma rota publica lista dados sensiveis.
 - Politicas de acesso foram testadas.
 - Documentacao de seguranca esta atualizada.
+
+## Milestone 9 - Produto Operacional E Relatorios
+
+### Issue 26 - Fluxo visual completo do atendimento
+
+**Tipo:** fullstack/business
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/26-fluxo-operacional-completo`
+
+**Objetivo:** Mostrar o fluxo real do atendimento, conectando denuncia, chamado, medida protetiva, encaminhamento e finalizacao.
+
+**Escopo:**
+
+- Representar no Kanban o fluxo: denuncia recebida, atribuida, em analise, chamado aberto, medida aplicada, encaminhamento registrado e finalizado.
+- Exibir a etapa operacional derivada quando uma denuncia ja tiver chamado vinculado.
+- Corrigir a exibicao de denuncia vinculada em chamado finalizado para nao parecer pendencia em analise.
+- Criar helpers testaveis para calcular etapa operacional.
+- Registrar auditoria nas transicoes relevantes.
+
+**Criterios de aceite:**
+
+- Kanban mostra todo o fluxo do sistema.
+- Denuncia convertida em chamado acompanha o status do chamado.
+- Chamado finalizado nao exibe denuncia vinculada como "em analise" ativa.
+- Testes cobrem as etapas do fluxo.
+
+### Issue 27 - Acessibilidade visual e identidade das telas
+
+**Tipo:** frontend/ux
+
+**Modelo recomendado:** `gpt-5.6-sol`
+
+**Branch sugerida:** `issue/27-identidade-visual-fluxos`
+
+**Objetivo:** Melhorar a leitura visual do painel e diferenciar melhor as areas administrativas.
+
+**Escopo:**
+
+- Diferenciar visualmente Denuncias, Chamados, Cadastros e Relatorios.
+- Criar badges de status com cores semanticas e contraste adequado.
+- Adicionar timeline/resumo de etapas em denuncia e chamado.
+- Melhorar hierarquia visual de cards, titulos e acoes.
+- Manter visual acolhedor e claro, evitando uma interface de uma cor so.
+
+**Criterios de aceite:**
+
+- Usuario entende rapidamente em qual tela esta.
+- Status e etapas ficam claros por texto e cor.
+- Interface continua responsiva e acessivel.
+
+### Issue 28 - Cadastros auxiliares editaveis e compactos
+
+**Tipo:** fullstack/admin-ui
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/28-cadastros-editaveis-compactos`
+
+**Objetivo:** Tornar motivos de denuncia e medidas protetivas mais faceis de manter.
+
+**Escopo:**
+
+- Trocar listas longas por visual compacto, com secoes recolhiveis ou tabela simples.
+- Adicionar edicao de nome e descricao para motivos.
+- Adicionar edicao de nome e descricao para medidas protetivas.
+- Manter ativar/desativar.
+- Exibir contadores de ativos e inativos.
+- Registrar auditoria de edicao.
+
+**Criterios de aceite:**
+
+- Admin cria, edita, ativa e desativa motivos.
+- Admin cria, edita, ativa e desativa medidas.
+- Tela nao lista tudo aberto de forma cansativa.
+
+### Issue 29 - Cadastro de conselheiros completo
+
+**Tipo:** fullstack/admin/storage
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/29-conselheiros-foto-telefones`
+
+**Objetivo:** Melhorar o cadastro de conselheiros para uso real e exibicao publica.
+
+**Escopo:**
+
+- Permitir foto local em PNG/JPG, preferencialmente via Supabase Storage.
+- Manter fallback com URL caso Storage ainda nao esteja configurado.
+- Separar telefone fixo e telefone de plantao/WhatsApp.
+- Deixar mandato padrao como `2024-2028`.
+- Melhorar preview/lista de conselheiros cadastrados.
+- Refletir dados publicos na area publica.
+
+**Criterios de aceite:**
+
+- Admin cadastra conselheiro com foto local.
+- Mandato vem predefinido como `2024-2028`.
+- Telefones fixo e plantao ficam separados.
+- Conselheiro publico aparece corretamente na home.
+
+### Issue 30 - Relatorios gerenciais avancados
+
+**Tipo:** frontend/data-viz
+
+**Modelo recomendado:** `gpt-5.6-sol`
+
+**Branch sugerida:** `issue/30-relatorios-graficos-comparacao`
+
+**Objetivo:** Evoluir relatorios de barras simples para visualizacoes gerenciais com comparacao.
+
+**Escopo:**
+
+- Adicionar graficos de barras.
+- Adicionar grafico de pizza/donut para distribuicoes.
+- Permitir selecionar categorias para comparacao.
+- Comparar denuncias por motivo, chamados por status, chamados por conselheiro, medidas aplicadas e encaminhamentos.
+- Manter filtro por periodo.
+- Melhorar estados vazios.
+
+**Criterios de aceite:**
+
+- Relatorios mostram graficos claros.
+- Usuario seleciona categorias para comparar.
+- Dados respeitam filtros do periodo.
+- Testes cobrem agregacoes e filtros.
+
+### Issue 31 - Exportacao PDF de relatorios
+
+**Tipo:** fullstack/reports
+
+**Modelo recomendado:** `gpt-5.5`
+
+**Branch sugerida:** `issue/31-exportacao-pdf-relatorios`
+
+**Objetivo:** Permitir exportar relatorios selecionados em PDF.
+
+**Escopo:**
+
+- Criar selecao de blocos para exportacao.
+- Permitir exportar comparacoes escolhidas.
+- Incluir titulo, periodo, filtros, data de emissao e responsavel logado.
+- Incluir tabelas resumidas dos graficos.
+- Gerar PDF por fluxo seguro autenticado.
+
+**Criterios de aceite:**
+
+- Usuario autorizado exporta PDF com os blocos selecionados.
+- PDF respeita filtros e categorias.
+- Exportacao nao expoe dados sensiveis fora do painel autenticado.

@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { BarChart3, ClipboardList, FileWarning, Route } from "lucide-react";
+import {
+  BarChart3,
+  ClipboardList,
+  Download,
+  FileWarning,
+  Route,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,13 +19,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireAdminProfile } from "@/lib/auth/admin";
-import { signOutAction } from "@/lib/auth/actions";
 import {
+  buildReportExportQuery,
   calculatePercent,
   getAdminReportsData,
+  parseReportCategories,
   parseReportFilters,
+  reportCategories,
+  reportCategoryLabels,
   type CountItem,
+  type ReportCategory,
 } from "@/lib/admin/relatorios";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 
 export const dynamic = "force-dynamic";
 
@@ -31,12 +42,15 @@ function RankingCard({
   title,
   description,
   items,
+  chart = "bar",
 }: {
   title: string;
   description: string;
   items: CountItem[];
+  chart?: "bar" | "donut";
 }) {
   const max = Math.max(0, ...items.map((item) => item.total));
+  const total = items.reduce((sum, item) => sum + item.total, 0);
 
   return (
     <Card className="rounded-lg">
@@ -46,20 +60,47 @@ function RankingCard({
       </CardHeader>
       <CardContent className="space-y-3">
         {items.length > 0 ? (
-          items.map((item) => (
-            <div key={item.label} className="space-y-1">
-              <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="font-medium">{item.label}</span>
-                <span className="text-muted-foreground">{item.total}</span>
+          chart === "donut" ? (
+            <div className="grid gap-4 md:grid-cols-[140px_1fr] md:items-center">
+              <div
+                className="mx-auto flex size-32 items-center justify-center rounded-full border text-center text-sm font-semibold"
+                style={{
+                  background: `conic-gradient(var(--primary) ${calculatePercent(
+                    items[0]?.total ?? 0,
+                    total,
+                  )}%, var(--secondary) 0)`,
+                }}
+              >
+                <span className="rounded-lg bg-card px-2 py-1">{total}</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full rounded-full bg-primary"
-                  style={{ width: `${calculatePercent(item.total, max)}%` }}
-                />
+              <div className="space-y-2">
+                {items.map((item) => (
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between gap-3 rounded-lg border bg-background px-3 py-2 text-sm"
+                  >
+                    <span className="font-medium">{item.label}</span>
+                    <span className="text-muted-foreground">{item.total}</span>
+                  </div>
+                ))}
               </div>
             </div>
-          ))
+          ) : (
+            items.map((item) => (
+              <div key={item.label} className="space-y-1">
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-medium">{item.label}</span>
+                  <span className="text-muted-foreground">{item.total}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-secondary">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${calculatePercent(item.total, max)}%` }}
+                  />
+                </div>
+              </div>
+            ))
+          )
         ) : (
           <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
             Sem dados para o periodo selecionado.
@@ -70,13 +111,57 @@ function RankingCard({
   );
 }
 
+const reportBlocks: Record<
+  ReportCategory,
+  {
+    description: string;
+    chart: "bar" | "donut";
+    getItems: (data: Awaited<ReturnType<typeof getAdminReportsData>>) => CountItem[];
+  }
+> = {
+  denuncias_por_motivo: {
+    description: "Categorias mais frequentes no periodo.",
+    chart: "bar",
+    getItems: (data) => data.denunciasPorMotivo,
+  },
+  chamados_por_status: {
+    description: "Distribuicao dos atendimentos.",
+    chart: "donut",
+    getItems: (data) => data.chamadosPorStatus,
+  },
+  chamados_por_conselheiro: {
+    description: "Responsaveis vinculados aos chamados.",
+    chart: "bar",
+    getItems: (data) => data.chamadosPorConselheiro,
+  },
+  encaminhamentos_por_periodo: {
+    description: "Volume diario de encaminhamentos.",
+    chart: "bar",
+    getItems: (data) => data.encaminhamentosPorPeriodo,
+  },
+  medidas_mais_aplicadas: {
+    description: "Medidas vinculadas aos encaminhamentos.",
+    chart: "donut",
+    getItems: (data) => data.medidasMaisAplicadas,
+  },
+};
+
 export default async function RelatoriosPage({
   searchParams,
 }: RelatoriosPageProps) {
-  const profile = await requireAdminProfile();
+  await requireAdminProfile();
   const params = (await searchParams) ?? {};
   const filters = parseReportFilters(params);
+  const selectedCategories = parseReportCategories(params);
   const data = await getAdminReportsData(filters);
+  const areaAccent = getAreaAccent("relatorios");
+  const exportQuery = buildReportExportQuery({
+    filters,
+    categories: selectedCategories,
+  });
+  const exportHref = `/admin/relatorios/exportar${
+    exportQuery ? `?${exportQuery}` : ""
+  }`;
   const cards = [
     {
       title: "Denuncias",
@@ -97,29 +182,14 @@ export default async function RelatoriosPage({
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-4">
-          <Link href="/admin" className="text-sm font-semibold">
-            Conselho Tutelar
-          </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
-              {profile.role}
-            </Badge>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm">
-                Sair
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto w-full max-w-6xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Relatorios
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
               Visao gerencial.
@@ -148,7 +218,8 @@ export default async function RelatoriosPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="grid gap-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
+            <form className="grid gap-4">
+              <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
               <div className="space-y-2">
                 <Label htmlFor="data_inicio">De</Label>
                 <Input
@@ -174,6 +245,36 @@ export default async function RelatoriosPage({
               >
                 Limpar
               </Link>
+              </div>
+              <fieldset className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                <legend className="mb-2 text-sm font-medium">
+                  Categorias para comparar
+                </legend>
+                {reportCategories.map((category) => (
+                  <label
+                    key={category}
+                    className="flex items-center gap-2 rounded-lg border bg-background px-3 py-2 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      name="categorias"
+                      value={category}
+                      defaultChecked={selectedCategories.includes(category)}
+                      className="size-4"
+                    />
+                    {reportCategoryLabels[category]}
+                  </label>
+                ))}
+              </fieldset>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={exportHref}
+                  className="inline-flex h-8 items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
+                >
+                  <Download className="mr-2 size-4" aria-hidden="true" />
+                  Exportar PDF
+                </Link>
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -201,31 +302,19 @@ export default async function RelatoriosPage({
         </div>
 
         <div className="grid gap-5 lg:grid-cols-2">
-          <RankingCard
-            title="Denuncias por motivo"
-            description="Categorias mais frequentes no periodo."
-            items={data.denunciasPorMotivo}
-          />
-          <RankingCard
-            title="Chamados por status"
-            description="Distribuicao dos atendimentos."
-            items={data.chamadosPorStatus}
-          />
-          <RankingCard
-            title="Chamados por conselheiro"
-            description="Responsaveis vinculados aos chamados."
-            items={data.chamadosPorConselheiro}
-          />
-          <RankingCard
-            title="Encaminhamentos por periodo"
-            description="Volume diario de encaminhamentos."
-            items={data.encaminhamentosPorPeriodo}
-          />
-          <RankingCard
-            title="Medidas protetivas mais aplicadas"
-            description="Medidas vinculadas aos encaminhamentos."
-            items={data.medidasMaisAplicadas}
-          />
+          {selectedCategories.map((category) => {
+            const block = reportBlocks[category];
+
+            return (
+              <RankingCard
+                key={category}
+                title={reportCategoryLabels[category]}
+                description={block.description}
+                items={block.getItems(data)}
+                chart={block.chart}
+              />
+            );
+          })}
         </div>
       </section>
     </main>

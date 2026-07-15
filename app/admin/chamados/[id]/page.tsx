@@ -4,6 +4,7 @@ import { ArrowLeft, ClipboardList } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { OperationalTimeline } from "@/components/admin/operational-timeline";
 import {
   Card,
   CardContent,
@@ -12,19 +13,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { requireAdminProfile } from "@/lib/auth/admin";
-import { signOutAction } from "@/lib/auth/actions";
 import {
   chamadoStatusLabels,
   canTransitionChamadoStatus,
   getAdminChamadoDetail,
+  getLinkedDenunciaStatusLabel,
   recordChamadoRead,
   updateChamadoStatusAction,
   type ChamadoStatus,
 } from "@/lib/admin/chamados";
 import { formatDashboardDate } from "@/lib/admin/dashboard";
+import type { OperationalStage } from "@/lib/admin/operational-flow";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 import {
+  applyMedidaProtetivaAction,
   createEncaminhamentoAction,
   getChamadoEncaminhamentos,
+  getChamadoMedidas,
   getMedidasProtetivasOptions,
 } from "@/lib/admin/encaminhamentos";
 
@@ -70,10 +75,11 @@ export default async function ChamadoDetailPage({
   const profile = await requireAdminProfile();
   const { id } = await params;
   const query = await searchParams;
-  const [chamado, medidas, encaminhamentos] = await Promise.all([
+  const [chamado, medidas, encaminhamentos, medidasAplicadas] = await Promise.all([
     getAdminChamadoDetail(id),
     getMedidasProtetivasOptions(),
     getChamadoEncaminhamentos(id),
+    getChamadoMedidas(id),
   ]);
 
   if (!chamado) {
@@ -81,32 +87,26 @@ export default async function ChamadoDetailPage({
   }
 
   await recordChamadoRead(profile.id, chamado.id);
+  const areaAccent = getAreaAccent("chamados");
+  const currentStage: OperationalStage =
+    chamado.status === "finalizado"
+      ? "finalizado"
+      : encaminhamentos.length > 0
+        ? "encaminhamento"
+        : medidasAplicadas.length > 0
+          ? "medida_aplicada"
+          : "chamado_aberto";
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-5 py-4">
-          <Link href="/admin" className="text-sm font-semibold">
-            Conselho Tutelar
-          </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
-              {profile.role}
-            </Badge>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm">
-                Sair
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto w-full max-w-5xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Detalhe do chamado
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
               {chamado.titulo}
@@ -124,6 +124,10 @@ export default async function ChamadoDetailPage({
           </Link>
         </div>
 
+        <div className="mb-5">
+          <OperationalTimeline currentStage={currentStage} />
+        </div>
+
         {query?.success === "status_atualizado" ? (
           <p className="mb-5 rounded-lg border border-primary/20 bg-primary/8 px-3 py-2 text-sm text-primary">
             Status do chamado atualizado.
@@ -132,6 +136,11 @@ export default async function ChamadoDetailPage({
         {query?.success === "encaminhamento_criado" ? (
           <p className="mb-5 rounded-lg border border-primary/20 bg-primary/8 px-3 py-2 text-sm text-primary">
             Encaminhamento registrado no historico do chamado.
+          </p>
+        ) : null}
+        {query?.success === "medida_aplicada" ? (
+          <p className="mb-5 rounded-lg border border-primary/20 bg-primary/8 px-3 py-2 text-sm text-primary">
+            Medida protetiva aplicada ao chamado.
           </p>
         ) : null}
         {query?.error ? (
@@ -233,7 +242,13 @@ export default async function ChamadoDetailPage({
             <CardContent className="space-y-3">
               {chamado.denuncias ? (
                 <>
-                  <DetailItem label="Status da denuncia" value={chamado.denuncias.status} />
+                  <DetailItem
+                    label="Etapa operacional"
+                    value={getLinkedDenunciaStatusLabel({
+                      chamadoStatus: chamado.status,
+                      denunciaStatus: chamado.denuncias.status,
+                    })}
+                  />
                   <p className="rounded-lg border bg-background p-3 text-sm leading-6 text-muted-foreground">
                     {chamado.denuncias.relato}
                   </p>
@@ -247,6 +262,97 @@ export default async function ChamadoDetailPage({
               ) : (
                 <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
                   Chamado sem denuncia vinculada.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mt-5 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+          <Card className="rounded-lg">
+            <CardHeader>
+              <CardTitle>Aplicar medida protetiva</CardTitle>
+              <CardDescription>
+                Vincule uma medida ao chamado antes ou junto do encaminhamento.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form action={applyMedidaProtetivaAction} className="space-y-4">
+                <input type="hidden" name="chamado_id" value={chamado.id} />
+                <div className="space-y-2">
+                  <label
+                    htmlFor="aplicar_medida_protetiva_id"
+                    className="text-sm font-medium"
+                  >
+                    Medida protetiva
+                  </label>
+                  <select
+                    id="aplicar_medida_protetiva_id"
+                    name="medida_protetiva_id"
+                    required
+                    className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    <option value="">Selecione</option>
+                    {medidas.map((medida) => (
+                      <option key={medida.id} value={medida.id}>
+                        {medida.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="observacoes" className="text-sm font-medium">
+                    Observacoes
+                  </label>
+                  <textarea
+                    id="observacoes"
+                    name="observacoes"
+                    rows={4}
+                    className="min-h-20 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  />
+                </div>
+                <Button type="submit" className="w-full">
+                  Aplicar medida
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-lg">
+            <CardHeader>
+              <CardTitle>Medidas aplicadas</CardTitle>
+              <CardDescription>
+                Medidas protetivas vinculadas a este chamado.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {medidasAplicadas.length > 0 ? (
+                medidasAplicadas.map((medida) => (
+                  <div
+                    key={medida.id}
+                    className="rounded-lg border bg-background p-3"
+                  >
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <Badge variant="secondary" className="rounded-lg">
+                        {medida.medidas_protetivas?.nome ?? "Medida"}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDashboardDate(medida.created_at)}
+                      </span>
+                    </div>
+                    {medida.observacoes ? (
+                      <p className="text-sm leading-6 text-muted-foreground">
+                        {medida.observacoes}
+                      </p>
+                    ) : null}
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Responsavel: {medida.profiles?.nome ?? "Nao informado"}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
+                  Nenhuma medida protetiva aplicada ainda.
                 </p>
               )}
             </CardContent>

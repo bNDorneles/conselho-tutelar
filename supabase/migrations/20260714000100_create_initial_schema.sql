@@ -3,6 +3,7 @@ create extension if not exists pgcrypto;
 create type public.profile_role as enum ('conselheiro', 'admin');
 create type public.denuncia_status as enum (
   'recebida',
+  'atribuida',
   'em_analise',
   'convertida_em_chamado',
   'arquivada'
@@ -33,6 +34,13 @@ $$;
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   nome text not null,
+  email text,
+  telefone text,
+  cargo text,
+  foto_url text,
+  sobre text,
+  mandato text,
+  exibir_publico boolean not null default false,
   role public.profile_role not null default 'conselheiro',
   ativo boolean not null default true,
   created_at timestamptz not null default now(),
@@ -49,6 +57,10 @@ create table public.conselho_tutelar (
   telefone text,
   email text,
   horario_atendimento text,
+  whatsapp text,
+  facebook_url text,
+  instagram_url text,
+  mapa_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint conselho_tutelar_nome_not_blank check (length(trim(nome)) > 0),
@@ -76,6 +88,11 @@ create table public.denuncias (
   vitima_nome_informado text,
   vitima_idade_informada integer,
   vitima_endereco_informado text,
+  vitima_nome_pai_informado text,
+  vitima_nome_mae_informado text,
+  vitima_escola_informada text,
+  vitima_genero_informado text,
+  conselheiro_responsavel_id uuid references public.profiles(id) on delete set null,
   observacoes_internas text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -83,6 +100,15 @@ create table public.denuncias (
   constraint denuncias_vitima_idade_range check (
     vitima_idade_informada is null
     or vitima_idade_informada between 0 and 17
+  ),
+  constraint denuncias_vitima_genero_check check (
+    vitima_genero_informado is null
+    or vitima_genero_informado in (
+      'feminino',
+      'masculino',
+      'outro',
+      'nao_informado'
+    )
   )
 );
 
@@ -146,6 +172,15 @@ create table public.encaminhamentos (
   constraint encaminhamentos_descricao_not_blank check (length(trim(descricao)) > 0)
 );
 
+create table public.chamado_medidas_protetivas (
+  id uuid primary key default gen_random_uuid(),
+  chamado_id uuid not null references public.chamados(id) on delete cascade,
+  medida_protetiva_id uuid not null references public.medidas_protetivas(id),
+  responsavel_id uuid references public.profiles(id) on delete set null,
+  observacoes text,
+  created_at timestamptz not null default now()
+);
+
 create table public.audit_logs (
   id uuid primary key default gen_random_uuid(),
   actor_id uuid references public.profiles(id) on delete set null,
@@ -164,6 +199,8 @@ create index idx_motivos_denuncia_ativo on public.motivos_denuncia(ativo);
 
 create index idx_denuncias_status on public.denuncias(status);
 create index idx_denuncias_motivo_id on public.denuncias(motivo_id);
+create index idx_denuncias_conselheiro_responsavel_id
+  on public.denuncias(conselheiro_responsavel_id);
 create index idx_denuncias_created_at on public.denuncias(created_at desc);
 
 create index idx_vitimas_nome on public.vitimas(nome);
@@ -181,6 +218,11 @@ create index idx_encaminhamentos_medida_protetiva_id
   on public.encaminhamentos(medida_protetiva_id);
 create index idx_encaminhamentos_data_encaminhamento
   on public.encaminhamentos(data_encaminhamento desc);
+
+create index idx_chamado_medidas_chamado_id
+  on public.chamado_medidas_protetivas(chamado_id);
+create index idx_chamado_medidas_medida_id
+  on public.chamado_medidas_protetivas(medida_protetiva_id);
 
 create index idx_audit_logs_actor_id on public.audit_logs(actor_id);
 create index idx_audit_logs_entity on public.audit_logs(entity_table, entity_id);

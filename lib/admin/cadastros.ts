@@ -5,6 +5,10 @@ import { createServerSupabaseClient } from "../supabase/server";
 import type { Database } from "../supabase/database.types";
 
 type ConselhoUpdate = Database["public"]["Tables"]["conselho_tutelar"]["Update"];
+type ProfileUpsert = Database["public"]["Tables"]["profiles"]["Insert"];
+type CatalogItemUpdate =
+  | Database["public"]["Tables"]["motivos_denuncia"]["Update"]
+  | Database["public"]["Tables"]["medidas_protetivas"]["Update"];
 
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -36,6 +40,45 @@ export function buildConselhoUpdate(
     telefone: optionalText(input.telefone),
     email: optionalText(input.email),
     horario_atendimento: optionalText(input.horario_atendimento),
+    whatsapp: optionalText(input.whatsapp),
+    facebook_url: optionalText(input.facebook_url),
+    instagram_url: optionalText(input.instagram_url),
+    mapa_url: optionalText(input.mapa_url),
+  };
+}
+
+export function buildCatalogItemUpdate(
+  input: Record<string, string | undefined>,
+): CatalogItemUpdate {
+  return {
+    nome: parseRequiredName(input.nome),
+    descricao: optionalText(input.descricao),
+  };
+}
+
+export function buildConselheiroProfileUpsert(
+  input: Record<string, string | undefined>
+): ProfileUpsert {
+  const id = input.id ?? "";
+
+  if (!uuidPattern.test(id)) {
+    throw new Error("usuario invalido");
+  }
+
+  return {
+    id,
+    nome: parseRequiredName(input.nome),
+    email: optionalText(input.email),
+    telefone: optionalText(input.telefone_plantao) ?? optionalText(input.telefone),
+    telefone_fixo: optionalText(input.telefone_fixo),
+    telefone_plantao: optionalText(input.telefone_plantao),
+    cargo: optionalText(input.cargo),
+    foto_url: optionalText(input.foto_url),
+    sobre: optionalText(input.sobre),
+    mandato: optionalText(input.mandato) ?? "2024-2028",
+    role: "conselheiro",
+    ativo: true,
+    exibir_publico: input.exibir_publico === "true",
   };
 }
 
@@ -87,6 +130,64 @@ export async function getAdminCadastrosData() {
     profiles: profiles.data ?? [],
     conselho: conselho.data,
   };
+}
+
+export async function upsertConselheiroAction(formData: FormData) {
+  "use server";
+
+  const profile = await requireActiveAdminProfile();
+  const supabase = await createServerSupabaseClient();
+  let payload: ProfileUpsert;
+  const id = String(formData.get("id") ?? "");
+  const foto = formData.get("foto");
+  let uploadedPhotoUrl: string | null = null;
+
+  if (foto instanceof File && foto.size > 0 && uuidPattern.test(id)) {
+    const extension = foto.type === "image/png" ? "png" : "jpg";
+    const path = `${id}/${Date.now()}.${extension}`;
+    const { error: uploadError } = await supabase.storage
+      .from("conselheiros")
+      .upload(path, foto, {
+        contentType: foto.type,
+        upsert: true,
+      });
+
+    if (!uploadError) {
+      const { data } = supabase.storage.from("conselheiros").getPublicUrl(path);
+      uploadedPhotoUrl = data.publicUrl;
+    }
+  }
+
+  try {
+    payload = buildConselheiroProfileUpsert({
+      id,
+      nome: String(formData.get("nome") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      telefone: String(formData.get("telefone") ?? ""),
+      telefone_fixo: String(formData.get("telefone_fixo") ?? ""),
+      telefone_plantao: String(formData.get("telefone_plantao") ?? ""),
+      cargo: String(formData.get("cargo") ?? ""),
+      foto_url: uploadedPhotoUrl ?? String(formData.get("foto_url") ?? ""),
+      sobre: String(formData.get("sobre") ?? ""),
+      mandato: String(formData.get("mandato") ?? ""),
+      exibir_publico: String(formData.get("exibir_publico") ?? ""),
+    });
+  } catch {
+    redirect("/admin/cadastros?error=conselheiro_invalido#conselheiros");
+  }
+
+  const { error } = await supabase.from("profiles").upsert(payload);
+
+  if (!error) {
+    await insertAuditLog({
+      actorId: profile.id,
+      action: "update",
+      entityTable: "profiles",
+      entityId: payload.id,
+    });
+  }
+
+  redirect("/admin/cadastros#conselheiros");
 }
 
 export async function createMotivoAction(formData: FormData) {
@@ -179,6 +280,50 @@ export async function toggleCadastroAction(formData: FormData) {
   redirect("/admin/cadastros");
 }
 
+export async function updateCatalogItemAction(formData: FormData) {
+  "use server";
+
+  const profile = await requireActiveAdminProfile();
+  const table = String(formData.get("table") ?? "");
+  const id = String(formData.get("id") ?? "");
+
+  if (
+    !["motivos_denuncia", "medidas_protetivas"].includes(table) ||
+    !uuidPattern.test(id)
+  ) {
+    redirect("/admin/cadastros");
+  }
+
+  let payload: CatalogItemUpdate;
+
+  try {
+    payload = buildCatalogItemUpdate({
+      nome: String(formData.get("nome") ?? ""),
+      descricao: String(formData.get("descricao") ?? ""),
+    });
+  } catch {
+    redirect("/admin/cadastros?error=catalogo_invalido");
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const query =
+    table === "motivos_denuncia"
+      ? supabase.from("motivos_denuncia").update(payload).eq("id", id)
+      : supabase.from("medidas_protetivas").update(payload).eq("id", id);
+  const { error } = await query;
+
+  if (!error) {
+    await insertAuditLog({
+      actorId: profile.id,
+      action: "update",
+      entityTable: table,
+      entityId: id,
+    });
+  }
+
+  redirect("/admin/cadastros");
+}
+
 export async function updateConselhoAction(formData: FormData) {
   "use server";
 
@@ -193,6 +338,10 @@ export async function updateConselhoAction(formData: FormData) {
     telefone: String(formData.get("telefone") ?? ""),
     email: String(formData.get("email") ?? ""),
     horario_atendimento: String(formData.get("horario_atendimento") ?? ""),
+    whatsapp: String(formData.get("whatsapp") ?? ""),
+    facebook_url: String(formData.get("facebook_url") ?? ""),
+    instagram_url: String(formData.get("instagram_url") ?? ""),
+    mapa_url: String(formData.get("mapa_url") ?? ""),
   });
 
   const { error } = await supabase

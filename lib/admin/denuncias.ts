@@ -1,53 +1,33 @@
-import { redirect } from "next/navigation";
-
-import { requireAdminProfile } from "../auth/admin";
 import { createServerSupabaseClient } from "../supabase/server";
 import type { Database } from "../supabase/database.types";
+import type { AdminDenuncia, DenunciaFilters } from "./denuncia-types";
+import { buildOperationalStageGroups } from "./operational-flow";
+import {
+  canTransitionDenunciaStatus,
+  denunciaStatusColumns,
+  denunciaStatusLabels,
+  isDenunciaStatus,
+  type DenunciaStatus,
+} from "./denuncia-workflow";
 
-export type DenunciaStatus = Database["public"]["Enums"]["denuncia_status"];
 type AuditAction = Database["public"]["Enums"]["audit_action"];
-type DenunciaRow = Database["public"]["Tables"]["denuncias"]["Row"];
 
-export type AdminDenuncia = DenunciaRow & {
-  motivos_denuncia: {
-    nome: string;
-  } | null;
+export {
+  canTransitionDenunciaStatus,
+  denunciaStatusColumns,
+  denunciaStatusLabels,
+  buildOperationalStageGroups,
+  type AdminDenuncia,
+  type DenunciaFilters,
+  type DenunciaStatus,
 };
-
-export type DenunciaFilters = {
-  status?: DenunciaStatus;
-  motivoId?: string;
-  dataInicio?: string;
-  dataFim?: string;
-};
-
-export const denunciaStatusColumns: DenunciaStatus[] = [
-  "recebida",
-  "em_analise",
-  "convertida_em_chamado",
-  "arquivada",
-];
-
-export const denunciaStatusLabels: Record<DenunciaStatus, string> = {
-  recebida: "Recebida",
-  em_analise: "Em analise",
-  convertida_em_chamado: "Convertida em chamado",
-  arquivada: "Arquivada",
-};
-
-const allowedTransitions = new Set([
-  "recebida:em_analise",
-  "em_analise:recebida",
-  "em_analise:arquivada",
-  "arquivada:em_analise",
-]);
 
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
-function isDenunciaStatus(value: string): value is DenunciaStatus {
-  return denunciaStatusColumns.includes(value as DenunciaStatus);
+export function isUuid(value: string) {
+  return uuidPattern.test(value);
 }
 
 function getSearchValue(
@@ -59,18 +39,12 @@ function getSearchValue(
   return Array.isArray(value) ? value[0] : value;
 }
 
-export function canTransitionDenunciaStatus(
-  from: DenunciaStatus,
-  to: DenunciaStatus
-) {
-  return allowedTransitions.has(`${from}:${to}`);
-}
-
 export function parseDenunciaFilters(
   input: Record<string, string | string[] | undefined>
 ): DenunciaFilters {
   const status = getSearchValue(input, "status");
   const motivoId = getSearchValue(input, "motivo_id");
+  const conselheiroId = getSearchValue(input, "conselheiro_id");
   const dataInicio = getSearchValue(input, "data_inicio");
   const dataFim = getSearchValue(input, "data_fim");
   const filters: DenunciaFilters = {};
@@ -79,8 +53,12 @@ export function parseDenunciaFilters(
     filters.status = status;
   }
 
-  if (motivoId && uuidPattern.test(motivoId)) {
+  if (motivoId && isUuid(motivoId)) {
     filters.motivoId = motivoId;
+  }
+
+  if (conselheiroId && isUuid(conselheiroId)) {
+    filters.conselheiroId = conselheiroId;
   }
 
   if (dataInicio && datePattern.test(dataInicio)) {
@@ -97,6 +75,7 @@ export function parseDenunciaFilters(
 export function buildDenunciaStatusGroups(rows: AdminDenuncia[]) {
   const groups: Record<DenunciaStatus, AdminDenuncia[]> = {
     recebida: [],
+    atribuida: [],
     em_analise: [],
     convertida_em_chamado: [],
     arquivada: [],
@@ -109,7 +88,18 @@ export function buildDenunciaStatusGroups(rows: AdminDenuncia[]) {
   return groups;
 }
 
-async function insertAuditLog(args: {
+export function buildDenunciaAssignmentUpdate(conselheiroId: string) {
+  if (!isUuid(conselheiroId)) {
+    throw new Error("conselheiro invalido");
+  }
+
+  return {
+    conselheiro_responsavel_id: conselheiroId,
+    status: "atribuida" as const,
+  };
+}
+
+export async function insertDenunciaAuditLog(args: {
   userId: string;
   action: AuditAction;
   entityId: string;
@@ -134,7 +124,7 @@ export async function getAdminDenuncias(filters: DenunciaFilters) {
   let query = supabase
     .from("denuncias")
     .select(
-      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,observacoes_internas,created_at,updated_at,motivos_denuncia(nome)"
+      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,vitima_nome_pai_informado,vitima_nome_mae_informado,vitima_escola_informada,vitima_genero_informado,conselheiro_responsavel_id,observacoes_internas,created_at,updated_at,motivos_denuncia(nome),profiles!denuncias_conselheiro_responsavel_id_fkey(nome),chamados(id,status,data_fechamento,chamado_medidas_protetivas(id),encaminhamentos(id))"
     )
     .order("created_at", { ascending: false });
 
@@ -144,6 +134,10 @@ export async function getAdminDenuncias(filters: DenunciaFilters) {
 
   if (filters.motivoId) {
     query = query.eq("motivo_id", filters.motivoId);
+  }
+
+  if (filters.conselheiroId) {
+    query = query.eq("conselheiro_responsavel_id", filters.conselheiroId);
   }
 
   if (filters.dataInicio) {
@@ -157,6 +151,7 @@ export async function getAdminDenuncias(filters: DenunciaFilters) {
   const { data, error } = await query;
 
   if (error) {
+    console.error("getAdminDenuncias failed", error);
     throw new Error("Nao foi possivel carregar as denuncias.");
   }
 
@@ -168,12 +163,13 @@ export async function getAdminDenunciaDetail(id: string) {
   const { data, error } = await supabase
     .from("denuncias")
     .select(
-      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,observacoes_internas,created_at,updated_at,motivos_denuncia(nome)"
+      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,vitima_nome_pai_informado,vitima_nome_mae_informado,vitima_escola_informada,vitima_genero_informado,conselheiro_responsavel_id,observacoes_internas,created_at,updated_at,motivos_denuncia(nome),profiles!denuncias_conselheiro_responsavel_id_fkey(nome)"
     )
     .eq("id", id)
     .maybeSingle();
 
   if (error) {
+    console.error("getAdminDenunciaDetail failed", error);
     throw new Error("Nao foi possivel carregar a denuncia.");
   }
 
@@ -196,7 +192,7 @@ export async function getMotivosDenunciaOptions() {
 }
 
 export async function recordDenunciaRead(profileId: string, denunciaId: string) {
-  await insertAuditLog({
+  await insertDenunciaAuditLog({
     userId: profileId,
     action: "read",
     entityId: denunciaId,
@@ -204,46 +200,4 @@ export async function recordDenunciaRead(profileId: string, denunciaId: string) 
       origem: "admin_denuncia_detail",
     },
   });
-}
-
-export async function updateDenunciaStatusAction(formData: FormData) {
-  "use server";
-
-  const profile = await requireAdminProfile();
-  const denunciaId = String(formData.get("denuncia_id") ?? "");
-  const fromStatus = String(formData.get("from_status") ?? "");
-  const toStatus = String(formData.get("to_status") ?? "");
-
-  if (
-    !uuidPattern.test(denunciaId) ||
-    !isDenunciaStatus(fromStatus) ||
-    !isDenunciaStatus(toStatus) ||
-    !canTransitionDenunciaStatus(fromStatus, toStatus)
-  ) {
-    redirect("/admin/denuncias?error=transicao_invalida");
-  }
-
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase
-    .from("denuncias")
-    .update({ status: toStatus })
-    .eq("id", denunciaId)
-    .eq("status", fromStatus);
-
-  if (error) {
-    redirect("/admin/denuncias?error=nao_foi_possivel_atualizar");
-  }
-
-  await insertAuditLog({
-    userId: profile.id,
-    action: "status_change",
-    entityId: denunciaId,
-    metadata: {
-      origem: "admin_denuncias_kanban",
-      status_anterior: fromStatus,
-      status_novo: toStatus,
-    },
-  });
-
-  redirect("/admin/denuncias");
 }

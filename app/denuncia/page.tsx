@@ -81,7 +81,8 @@ export default async function DenunciaPage({ searchParams }: DenunciaPageProps) 
           </h1>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
             Informe o que aconteceu com o maximo de detalhes que voce souber.
-            Nao pedimos seus dados pessoais neste formulario.
+            Os dados da crianca ou adolescente ajudam a equipe a localizar e
+            avaliar a situacao, mas preencha apenas o que souber.
           </p>
           <Card className="mt-6 rounded-lg border-primary/15 bg-secondary/30">
             <CardContent className="pt-6 text-sm leading-6 text-muted-foreground">
@@ -95,8 +96,8 @@ export default async function DenunciaPage({ searchParams }: DenunciaPageProps) 
           <CardHeader>
             <CardTitle>Relato da situacao</CardTitle>
             <CardDescription>
-              Campos sobre a vitima sao opcionais quando voce nao souber a
-              informacao.
+              O formulario continua anonimo. Campos sobre a vitima sao
+              opcionais quando voce nao souber a informacao.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -131,33 +132,108 @@ export default async function DenunciaPage({ searchParams }: DenunciaPageProps) 
                 />
               </div>
 
+              <div className="space-y-3">
+                <div>
+                  <h2 className="text-sm font-semibold">Dados da vitima</h2>
+                  <p className="text-xs leading-5 text-muted-foreground">
+                    Informe os dados da crianca ou adolescente quando souber.
+                  </p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="vitima_nome_informado">Nome da vitima</Label>
+                    <Input
+                      id="vitima_nome_informado"
+                      name="vitima_nome_informado"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vitima_idade_informada">
+                      Idade aproximada
+                    </Label>
+                    <Input
+                      id="vitima_idade_informada"
+                      name="vitima_idade_informada"
+                      type="number"
+                      min={0}
+                      max={17}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vitima_genero_informado">Genero</Label>
+                    <select
+                      id="vitima_genero_informado"
+                      name="vitima_genero_informado"
+                      className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                    >
+                      <option value="">Nao informado</option>
+                      <option value="feminino">Feminino</option>
+                      <option value="masculino">Masculino</option>
+                      <option value="outro">Outro</option>
+                      <option value="nao_informado">Prefiro nao informar</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vitima_escola_informada">Escola</Label>
+                    <Input
+                      id="vitima_escola_informada"
+                      name="vitima_escola_informada"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <h2 className="text-sm font-semibold">
+                    Familia e localizacao
+                  </h2>
+                  <p className="text-xs leading-5 text-muted-foreground">
+                    Esses dados ajudam na triagem quando a equipe precisar
+                    confirmar informacoes.
+                  </p>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="vitima_nome_pai_informado">
+                      Nome do pai
+                    </Label>
+                    <Input
+                      id="vitima_nome_pai_informado"
+                      name="vitima_nome_pai_informado"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vitima_nome_mae_informado">
+                      Nome da mae
+                    </Label>
+                    <Input
+                      id="vitima_nome_mae_informado"
+                      name="vitima_nome_mae_informado"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="vitima_endereco_informado">
+                      Endereco/local da vitima
+                    </Label>
+                    <Input
+                      id="vitima_endereco_informado"
+                      name="vitima_endereco_informado"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="local_ocorrencia">Local da ocorrencia</Label>
+                    <Input id="local_ocorrencia" name="local_ocorrencia" />
+                  </div>
+                </div>
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="local_ocorrencia">Local da ocorrencia</Label>
-                  <Input id="local_ocorrencia" name="local_ocorrencia" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="vitima_nome_informado">Nome da vitima</Label>
-                  <Input id="vitima_nome_informado" name="vitima_nome_informado" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="vitima_idade_informada">Idade aproximada</Label>
-                  <Input
-                    id="vitima_idade_informada"
-                    name="vitima_idade_informada"
-                    type="number"
-                    min={0}
-                    max={17}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="vitima_endereco_informado">
-                    Endereco/local da vitima
-                  </Label>
-                  <Input
-                    id="vitima_endereco_informado"
-                    name="vitima_endereco_informado"
-                  />
+                  <p className="rounded-lg border bg-muted/45 px-3 py-2 text-xs leading-5 text-muted-foreground">
+                    Se alguma informacao estiver incompleta, envie mesmo assim.
+                    O Conselho avaliara o relato recebido.
+                  </p>
                 </div>
               </div>
 

@@ -18,6 +18,11 @@ const optionalAge = z
   })
   .pipe(z.number().int().min(0).max(17).nullable());
 
+const optionalGender = z.preprocess(
+  (value) => (value === "" || value === undefined ? null : value),
+  z.enum(["feminino", "masculino", "outro", "nao_informado"]).nullable(),
+);
+
 export const denunciaSchema = z.object({
   motivo_id: z.string().uuid("Selecione um motivo valido."),
   relato: z
@@ -29,6 +34,10 @@ export const denunciaSchema = z.object({
   vitima_nome_informado: optionalText,
   vitima_idade_informada: optionalAge,
   vitima_endereco_informado: optionalText,
+  vitima_nome_pai_informado: optionalText,
+  vitima_nome_mae_informado: optionalText,
+  vitima_escola_informada: optionalText,
+  vitima_genero_informado: optionalGender,
 });
 
 export type DenunciaInput = z.infer<typeof denunciaSchema>;

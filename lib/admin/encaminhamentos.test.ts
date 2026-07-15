@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { buildEncaminhamentoInsert, parseEncaminhamentoInput } from "./encaminhamentos";
+import {
+  buildChamadoMedidaInsert,
+  buildEncaminhamentoInsert,
+  parseChamadoMedidaInput,
+  parseEncaminhamentoInput,
+} from "./encaminhamentos";
 
 describe("encaminhamentos helpers", () => {
   it("parses valid encaminhamento input", () => {
@@ -49,6 +54,40 @@ describe("encaminhamentos helpers", () => {
       responsavel_id: "1a15f124-3bd4-4c75-80fd-4d66a13383cf",
       descricao: "Encaminhamento registrado.",
       orgao_destino: null,
+    });
+  });
+
+  it("parses protective measure application input", () => {
+    expect(
+      parseChamadoMedidaInput({
+        chamado_id: "67837c5b-3fe7-438f-983c-7e5de1d563e6",
+        medida_protetiva_id: "1a15f124-3bd4-4c75-80fd-4d66a13383cf",
+        observacoes: "Aplicada durante atendimento inicial.",
+      }),
+    ).toEqual({
+      chamadoId: "67837c5b-3fe7-438f-983c-7e5de1d563e6",
+      medidaProtetivaId: "1a15f124-3bd4-4c75-80fd-4d66a13383cf",
+      observacoes: "Aplicada durante atendimento inicial.",
+    });
+  });
+
+  it("builds protective measure application payload", () => {
+    const input = parseChamadoMedidaInput({
+      chamado_id: "67837c5b-3fe7-438f-983c-7e5de1d563e6",
+      medida_protetiva_id: "1a15f124-3bd4-4c75-80fd-4d66a13383cf",
+      observacoes: "",
+    });
+
+    expect(
+      buildChamadoMedidaInsert({
+        input,
+        responsavelId: "550e8400-e29b-41d4-a716-446655440000",
+      }),
+    ).toEqual({
+      chamado_id: "67837c5b-3fe7-438f-983c-7e5de1d563e6",
+      medida_protetiva_id: "1a15f124-3bd4-4c75-80fd-4d66a13383cf",
+      responsavel_id: "550e8400-e29b-41d4-a716-446655440000",
+      observacoes: null,
     });
   });
 });

@@ -4,6 +4,7 @@ import { ArrowLeft, Eye } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { OperationalTimeline } from "@/components/admin/operational-timeline";
 import {
   Card,
   CardContent,
@@ -12,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { requireAdminProfile } from "@/lib/auth/admin";
-import { signOutAction } from "@/lib/auth/actions";
+import { assignDenunciaAction } from "@/lib/admin/denuncia-actions";
 import {
   denunciaStatusLabels,
   getAdminDenunciaDetail,
@@ -21,8 +22,11 @@ import {
 import {
   canCreateChamadoFromDenuncia,
   createChamadoFromDenunciaAction,
+  getConselheiroOptions,
 } from "@/lib/admin/chamados";
 import { formatDashboardDate } from "@/lib/admin/dashboard";
+import { getDenunciaOperationalStage } from "@/lib/admin/operational-flow";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +64,10 @@ export default async function DenunciaDetailPage({
   const profile = await requireAdminProfile();
   const { id } = await params;
   const query = await searchParams;
-  const denuncia = await getAdminDenunciaDetail(id);
+  const [denuncia, conselheiros] = await Promise.all([
+    getAdminDenunciaDetail(id),
+    getConselheiroOptions(),
+  ]);
 
   if (!denuncia) {
     notFound();
@@ -70,32 +77,19 @@ export default async function DenunciaDetailPage({
   const canCreateChamado = canCreateChamadoFromDenuncia(denuncia);
   const showSuccess = query?.success === "chamado_criado";
   const showError = Boolean(query?.error);
+  const areaAccent = getAreaAccent("denuncias");
+  const currentStage = getDenunciaOperationalStage(denuncia);
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-5 py-4">
-          <Link href="/admin" className="text-sm font-semibold">
-            Conselho Tutelar
-          </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
-              {profile.role}
-            </Badge>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm">
-                Sair
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto w-full max-w-5xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Detalhe da denuncia
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
               Analise do relato.
@@ -112,6 +106,10 @@ export default async function DenunciaDetailPage({
             <ArrowLeft className="size-4" aria-hidden="true" />
             Voltar ao Kanban
           </Link>
+        </div>
+
+        <div className="mb-5">
+          <OperationalTimeline currentStage={currentStage} />
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
@@ -145,6 +143,10 @@ export default async function DenunciaDetailPage({
                 value={denunciaStatusLabels[denuncia.status]}
               />
               <DetailItem
+                label="Conselheiro responsavel"
+                value={denuncia.profiles?.nome ?? null}
+              />
+              <DetailItem
                 label="Motivo"
                 value={denuncia.motivos_denuncia?.nome ?? null}
               />
@@ -156,6 +158,29 @@ export default async function DenunciaDetailPage({
                 label="Atualizada em"
                 value={formatDashboardDate(denuncia.updated_at)}
               />
+              <form action={assignDenunciaAction} className="space-y-2">
+                <input type="hidden" name="denuncia_id" value={denuncia.id} />
+                <label htmlFor="conselheiro_id" className="text-sm font-medium">
+                  Atribuir a conselheiro
+                </label>
+                <select
+                  id="conselheiro_id"
+                  name="conselheiro_id"
+                  defaultValue={denuncia.conselheiro_responsavel_id ?? ""}
+                  required
+                  className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <option value="">Selecione</option>
+                  {conselheiros.map((conselheiro) => (
+                    <option key={conselheiro.id} value={conselheiro.id}>
+                      {conselheiro.nome}
+                    </option>
+                  ))}
+                </select>
+                <Button type="submit" variant="outline" className="w-full">
+                  Atribuir denuncia
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </div>
@@ -211,6 +236,22 @@ export default async function DenunciaDetailPage({
             <DetailItem
               label="Endereco/local"
               value={denuncia.vitima_endereco_informado}
+            />
+            <DetailItem
+              label="Nome do pai"
+              value={denuncia.vitima_nome_pai_informado}
+            />
+            <DetailItem
+              label="Nome da mae"
+              value={denuncia.vitima_nome_mae_informado}
+            />
+            <DetailItem
+              label="Escola"
+              value={denuncia.vitima_escola_informada}
+            />
+            <DetailItem
+              label="Genero informado"
+              value={denuncia.vitima_genero_informado}
             />
             <DetailItem
               label="Observacoes internas"

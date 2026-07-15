@@ -1,8 +1,9 @@
-import { ArrowRight, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DenunciasKanban } from "@/components/admin/denuncias-kanban";
 import {
   Card,
   CardContent,
@@ -13,22 +14,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireAdminProfile } from "@/lib/auth/admin";
-import { signOutAction } from "@/lib/auth/actions";
+import { getConselheiroOptions } from "@/lib/admin/chamados";
 import {
-  buildDenunciaStatusGroups,
-  canTransitionDenunciaStatus,
+  moveDenunciaStatusAction,
+  updateDenunciaStatusAction,
+} from "@/lib/admin/denuncia-actions";
+import {
   denunciaStatusColumns,
   denunciaStatusLabels,
+  buildOperationalStageGroups,
   getAdminDenuncias,
   getMotivosDenunciaOptions,
   parseDenunciaFilters,
-  updateDenunciaStatusAction,
   type DenunciaStatus,
 } from "@/lib/admin/denuncias";
-import {
-  formatDashboardDate,
-  summarizeText,
-} from "@/lib/admin/dashboard";
+import type { OperationalStage } from "@/lib/admin/operational-flow";
+import { getAreaAccent } from "@/lib/admin/visual-status";
 
 export const dynamic = "force-dynamic";
 
@@ -36,10 +37,10 @@ type AdminDenunciasPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const statusActions: Record<DenunciaStatus, DenunciaStatus[]> = {
-  recebida: ["em_analise"],
-  em_analise: ["recebida", "arquivada"],
-  convertida_em_chamado: [],
+const statusActions: Partial<Record<OperationalStage, DenunciaStatus[]>> = {
+  recebida: ["atribuida"],
+  atribuida: ["em_analise", "recebida"],
+  em_analise: ["arquivada"],
   arquivada: ["em_analise"],
 };
 
@@ -60,48 +61,35 @@ function getErrorMessage(error?: string | string[]) {
 export default async function AdminDenunciasPage({
   searchParams,
 }: AdminDenunciasPageProps) {
-  const profile = await requireAdminProfile();
+  await requireAdminProfile();
   const params = (await searchParams) ?? {};
   const filters = parseDenunciaFilters(params);
-  const [denuncias, motivos] = await Promise.all([
+  const [denuncias, motivos, conselheiros] = await Promise.all([
     getAdminDenuncias(filters),
     getMotivosDenunciaOptions(),
+    getConselheiroOptions(),
   ]);
-  const groups = buildDenunciaStatusGroups(denuncias);
+  const groups = buildOperationalStageGroups(denuncias);
   const errorMessage = getErrorMessage(params.error);
+  const areaAccent = getAreaAccent("denuncias");
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 py-4">
-          <Link href="/admin" className="text-sm font-semibold">
-            Conselho Tutelar
-          </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
-              {profile.role}
-            </Badge>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm">
-                Sair
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto w-full max-w-7xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <Badge className="mb-4 rounded-lg bg-primary text-primary-foreground">
-              Triagem
+            <Badge
+              variant="outline"
+              className={`mb-4 rounded-lg ${areaAccent.className}`}
+            >
+              {areaAccent.label}
             </Badge>
             <h1 className="text-3xl font-semibold leading-tight">
-              Denuncias recebidas.
+              Fluxo operacional de denuncias.
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Organize relatos anonimos por status e abra detalhes para
-              analisar com auditoria de acesso.
+              Acompanhe cada relato desde a chegada ate a finalizacao do
+              atendimento vinculado.
             </p>
           </div>
           <Link
@@ -123,7 +111,7 @@ export default async function AdminDenunciasPage({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="grid gap-4 md:grid-cols-5">
+            <form className="grid gap-4 md:grid-cols-6">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
                 <select
@@ -152,6 +140,22 @@ export default async function AdminDenunciasPage({
                   {motivos.map((motivo) => (
                     <option key={motivo.id} value={motivo.id}>
                       {motivo.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="conselheiro_id">Conselheiro</Label>
+                <select
+                  id="conselheiro_id"
+                  name="conselheiro_id"
+                  defaultValue={filters.conselheiroId ?? ""}
+                  className="h-9 w-full rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <option value="">Todos</option>
+                  {conselheiros.map((conselheiro) => (
+                    <option key={conselheiro.id} value={conselheiro.id}>
+                      {conselheiro.nome}
                     </option>
                   ))}
                 </select>
@@ -195,91 +199,12 @@ export default async function AdminDenunciasPage({
           </p>
         ) : null}
 
-        <div className="grid gap-4 xl:grid-cols-4">
-          {denunciaStatusColumns.map((status) => (
-            <section key={status} className="min-h-64 rounded-lg border bg-card">
-              <div className="flex items-center justify-between border-b px-4 py-3">
-                <h2 className="text-sm font-semibold">
-                  {denunciaStatusLabels[status]}
-                </h2>
-                <Badge variant="secondary" className="rounded-lg">
-                  {groups[status].length}
-                </Badge>
-              </div>
-              <div className="space-y-3 p-3">
-                {groups[status].length > 0 ? (
-                  groups[status].map((denuncia) => (
-                    <Card key={denuncia.id} className="rounded-lg">
-                      <CardHeader className="space-y-2 p-4">
-                        <div className="flex items-center justify-between gap-3">
-                          <Badge variant="outline" className="rounded-lg">
-                            {denuncia.motivos_denuncia?.nome ?? "Sem motivo"}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {formatDashboardDate(denuncia.created_at)}
-                          </span>
-                        </div>
-                        <CardDescription className="leading-6">
-                          {summarizeText(denuncia.relato, 120)}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-3 p-4 pt-0">
-                        <Link
-                          href={`/admin/denuncias/${denuncia.id}`}
-                          className="inline-flex h-8 w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
-                        >
-                          Abrir detalhe
-                          <ArrowRight className="size-4" aria-hidden="true" />
-                        </Link>
-                        {statusActions[status].length > 0 ? (
-                          <div className="grid gap-2">
-                            {statusActions[status].map((nextStatus) =>
-                              canTransitionDenunciaStatus(status, nextStatus) ? (
-                                <form
-                                  key={nextStatus}
-                                  action={updateDenunciaStatusAction}
-                                >
-                                  <input
-                                    type="hidden"
-                                    name="denuncia_id"
-                                    value={denuncia.id}
-                                  />
-                                  <input
-                                    type="hidden"
-                                    name="from_status"
-                                    value={status}
-                                  />
-                                  <input
-                                    type="hidden"
-                                    name="to_status"
-                                    value={nextStatus}
-                                  />
-                                  <Button
-                                    type="submit"
-                                    variant="outline"
-                                    size="sm"
-                                    className="w-full"
-                                  >
-                                    Mover para{" "}
-                                    {denunciaStatusLabels[nextStatus]}
-                                  </Button>
-                                </form>
-                              ) : null
-                            )}
-                          </div>
-                        ) : null}
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
-                    Nenhuma denuncia nesta coluna.
-                  </p>
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
+        <DenunciasKanban
+          groups={groups}
+          statusActions={statusActions}
+          updateStatusAction={updateDenunciaStatusAction}
+          moveStatusAction={moveDenunciaStatusAction}
+        />
       </section>
     </main>
   );

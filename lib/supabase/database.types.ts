@@ -13,6 +13,15 @@ export type Database = {
         Row: {
           id: string;
           nome: string;
+          email: string | null;
+          telefone: string | null;
+          telefone_fixo: string | null;
+          telefone_plantao: string | null;
+          cargo: string | null;
+          foto_url: string | null;
+          sobre: string | null;
+          mandato: string | null;
+          exibir_publico: boolean;
           role: Database["public"]["Enums"]["profile_role"];
           ativo: boolean;
           created_at: string;
@@ -21,6 +30,15 @@ export type Database = {
         Insert: {
           id: string;
           nome: string;
+          email?: string | null;
+          telefone?: string | null;
+          telefone_fixo?: string | null;
+          telefone_plantao?: string | null;
+          cargo?: string | null;
+          foto_url?: string | null;
+          sobre?: string | null;
+          mandato?: string | null;
+          exibir_publico?: boolean;
           role?: Database["public"]["Enums"]["profile_role"];
           ativo?: boolean;
           created_at?: string;
@@ -29,6 +47,15 @@ export type Database = {
         Update: {
           id?: string;
           nome?: string;
+          email?: string | null;
+          telefone?: string | null;
+          telefone_fixo?: string | null;
+          telefone_plantao?: string | null;
+          cargo?: string | null;
+          foto_url?: string | null;
+          sobre?: string | null;
+          mandato?: string | null;
+          exibir_publico?: boolean;
           role?: Database["public"]["Enums"]["profile_role"];
           ativo?: boolean;
           created_at?: string;
@@ -46,6 +73,10 @@ export type Database = {
           telefone: string | null;
           email: string | null;
           horario_atendimento: string | null;
+          whatsapp: string | null;
+          facebook_url: string | null;
+          instagram_url: string | null;
+          mapa_url: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -58,6 +89,10 @@ export type Database = {
           telefone?: string | null;
           email?: string | null;
           horario_atendimento?: string | null;
+          whatsapp?: string | null;
+          facebook_url?: string | null;
+          instagram_url?: string | null;
+          mapa_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -70,6 +105,10 @@ export type Database = {
           telefone?: string | null;
           email?: string | null;
           horario_atendimento?: string | null;
+          whatsapp?: string | null;
+          facebook_url?: string | null;
+          instagram_url?: string | null;
+          mapa_url?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -112,6 +151,11 @@ export type Database = {
           vitima_nome_informado: string | null;
           vitima_idade_informada: number | null;
           vitima_endereco_informado: string | null;
+          vitima_nome_pai_informado: string | null;
+          vitima_nome_mae_informado: string | null;
+          vitima_escola_informada: string | null;
+          vitima_genero_informado: string | null;
+          conselheiro_responsavel_id: string | null;
           observacoes_internas: string | null;
           created_at: string;
           updated_at: string;
@@ -125,6 +169,11 @@ export type Database = {
           vitima_nome_informado?: string | null;
           vitima_idade_informada?: number | null;
           vitima_endereco_informado?: string | null;
+          vitima_nome_pai_informado?: string | null;
+          vitima_nome_mae_informado?: string | null;
+          vitima_escola_informada?: string | null;
+          vitima_genero_informado?: string | null;
+          conselheiro_responsavel_id?: string | null;
           observacoes_internas?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -138,6 +187,11 @@ export type Database = {
           vitima_nome_informado?: string | null;
           vitima_idade_informada?: number | null;
           vitima_endereco_informado?: string | null;
+          vitima_nome_pai_informado?: string | null;
+          vitima_nome_mae_informado?: string | null;
+          vitima_escola_informada?: string | null;
+          vitima_genero_informado?: string | null;
+          conselheiro_responsavel_id?: string | null;
           observacoes_internas?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -148,6 +202,13 @@ export type Database = {
             columns: ["motivo_id"];
             isOneToOne: false;
             referencedRelation: "motivos_denuncia";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "denuncias_conselheiro_responsavel_id_fkey";
+            columns: ["conselheiro_responsavel_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];
@@ -340,6 +401,55 @@ export type Database = {
           },
         ];
       };
+      chamado_medidas_protetivas: {
+        Row: {
+          id: string;
+          chamado_id: string;
+          medida_protetiva_id: string;
+          responsavel_id: string | null;
+          observacoes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          chamado_id: string;
+          medida_protetiva_id: string;
+          responsavel_id?: string | null;
+          observacoes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          chamado_id?: string;
+          medida_protetiva_id?: string;
+          responsavel_id?: string | null;
+          observacoes?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chamado_medidas_protetivas_chamado_id_fkey";
+            columns: ["chamado_id"];
+            isOneToOne: false;
+            referencedRelation: "chamados";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chamado_medidas_protetivas_medida_protetiva_id_fkey";
+            columns: ["medida_protetiva_id"];
+            isOneToOne: false;
+            referencedRelation: "medidas_protetivas";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chamado_medidas_protetivas_responsavel_id_fkey";
+            columns: ["responsavel_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       audit_logs: {
         Row: {
           id: string;
@@ -390,6 +500,7 @@ export type Database = {
       profile_role: "conselheiro" | "admin";
       denuncia_status:
         | "recebida"
+        | "atribuida"
         | "em_analise"
         | "convertida_em_chamado"
         | "arquivada";

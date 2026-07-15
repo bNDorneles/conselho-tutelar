@@ -43,6 +43,7 @@ alter table public.vitimas enable row level security;
 alter table public.chamados enable row level security;
 alter table public.medidas_protetivas enable row level security;
 alter table public.encaminhamentos enable row level security;
+alter table public.chamado_medidas_protetivas enable row level security;
 alter table public.audit_logs enable row level security;
 
 create policy "profiles can read own active profile"
@@ -145,6 +146,17 @@ using (public.is_active_conselheiro());
 
 create policy "active counselors can manage referrals"
 on public.encaminhamentos for all
+to authenticated
+using (public.is_active_conselheiro())
+with check (public.is_active_conselheiro());
+
+create policy "active counselors can read case protective measures"
+on public.chamado_medidas_protetivas for select
+to authenticated
+using (public.is_active_conselheiro());
+
+create policy "active counselors can manage case protective measures"
+on public.chamado_medidas_protetivas for all
 to authenticated
 using (public.is_active_conselheiro())
 with check (public.is_active_conselheiro());
