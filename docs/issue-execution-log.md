@@ -582,3 +582,22 @@ Resultado:
 - Graficos donut em CSS foram adicionados para distribuicoes.
 - Comparacao entre blocos pode ser feita selecionando duas ou mais categorias.
 - Teste adicionado para parsing de categorias selecionadas e fallback padrao.
+
+## Issue #31 - Exportacao PDF de relatorios
+
+Tipo da issue: frontend/admin-export
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/31-exportacao-pdf-relatorios
+Comandos de verificacao executados:
+- npm.cmd run test -- lib/admin/relatorios.test.ts
+- npm.cmd test
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Relatorios ganharam link de exportacao preservando periodo e categorias selecionadas.
+- Rota `/admin/relatorios/exportar` criada com layout proprio para impressao.
+- Tela de exportacao mostra totais, blocos selecionados e barras legiveis para salvar em PDF.
+- Botao `Gerar PDF` aciona a impressao do navegador em uma pagina limpa.
+- Teste adicionado para montagem segura da query de exportacao.

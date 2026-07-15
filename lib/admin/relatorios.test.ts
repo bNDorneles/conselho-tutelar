@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  buildReportExportQuery,
   calculatePercent,
   countByLabel,
   parseReportCategories,
@@ -65,5 +66,16 @@ describe("relatorios helpers", () => {
         ],
       }),
     ).toEqual(["denuncias_por_motivo", "medidas_mais_aplicadas"]);
+  });
+
+  it("builds export query preserving period and selected categories", () => {
+    expect(
+      buildReportExportQuery({
+        filters: { dataInicio: "2026-07-01", dataFim: "2026-07-31" },
+        categories: ["denuncias_por_motivo", "chamados_por_status"],
+      }),
+    ).toBe(
+      "data_inicio=2026-07-01&data_fim=2026-07-31&categorias=denuncias_por_motivo&categorias=chamados_por_status",
+    );
   });
 });
