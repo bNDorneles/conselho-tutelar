@@ -30,6 +30,17 @@ export type PublicConselhoInfo = {
   }>;
 };
 
+export type PublicConselheiro = {
+  id: string;
+  nome: string;
+  cargo: string;
+  telefone: string | null;
+  email: string | null;
+  fotoUrl: string | null;
+  sobre: string | null;
+  mandato: string | null;
+};
+
 const DEFAULT_CITY = "Sao Borja";
 const DEFAULT_UF = "RS";
 
@@ -94,4 +105,28 @@ export async function getPublicConselhoInfo() {
     .maybeSingle();
 
   return normalizeConselhoInfo(data);
+}
+
+export async function getPublicConselheiros() {
+  const supabase = await createServerSupabaseClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("id,nome,email,telefone,cargo,foto_url,sobre,mandato")
+    .eq("role", "conselheiro")
+    .eq("ativo", true)
+    .eq("exibir_publico", true)
+    .order("nome");
+
+  return (data ?? []).map(
+    (profile): PublicConselheiro => ({
+      id: profile.id,
+      nome: profile.nome,
+      cargo: profile.cargo ?? "Conselheiro tutelar",
+      telefone: profile.telefone,
+      email: profile.email,
+      fotoUrl: profile.foto_url,
+      sobre: profile.sobre,
+      mandato: profile.mandato,
+    }),
+  );
 }

@@ -5,6 +5,7 @@ import { createServerSupabaseClient } from "../supabase/server";
 import type { Database } from "../supabase/database.types";
 
 type ConselhoUpdate = Database["public"]["Tables"]["conselho_tutelar"]["Update"];
+type ProfileUpsert = Database["public"]["Tables"]["profiles"]["Insert"];
 
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -36,6 +37,34 @@ export function buildConselhoUpdate(
     telefone: optionalText(input.telefone),
     email: optionalText(input.email),
     horario_atendimento: optionalText(input.horario_atendimento),
+    whatsapp: optionalText(input.whatsapp),
+    facebook_url: optionalText(input.facebook_url),
+    instagram_url: optionalText(input.instagram_url),
+    mapa_url: optionalText(input.mapa_url),
+  };
+}
+
+export function buildConselheiroProfileUpsert(
+  input: Record<string, string | undefined>
+): ProfileUpsert {
+  const id = input.id ?? "";
+
+  if (!uuidPattern.test(id)) {
+    throw new Error("usuario invalido");
+  }
+
+  return {
+    id,
+    nome: parseRequiredName(input.nome),
+    email: optionalText(input.email),
+    telefone: optionalText(input.telefone),
+    cargo: optionalText(input.cargo),
+    foto_url: optionalText(input.foto_url),
+    sobre: optionalText(input.sobre),
+    mandato: optionalText(input.mandato),
+    role: "conselheiro",
+    ativo: true,
+    exibir_publico: input.exibir_publico === "true",
   };
 }
 
@@ -87,6 +116,43 @@ export async function getAdminCadastrosData() {
     profiles: profiles.data ?? [],
     conselho: conselho.data,
   };
+}
+
+export async function upsertConselheiroAction(formData: FormData) {
+  "use server";
+
+  const profile = await requireActiveAdminProfile();
+  const supabase = await createServerSupabaseClient();
+  let payload: ProfileUpsert;
+
+  try {
+    payload = buildConselheiroProfileUpsert({
+      id: String(formData.get("id") ?? ""),
+      nome: String(formData.get("nome") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      telefone: String(formData.get("telefone") ?? ""),
+      cargo: String(formData.get("cargo") ?? ""),
+      foto_url: String(formData.get("foto_url") ?? ""),
+      sobre: String(formData.get("sobre") ?? ""),
+      mandato: String(formData.get("mandato") ?? ""),
+      exibir_publico: String(formData.get("exibir_publico") ?? ""),
+    });
+  } catch {
+    redirect("/admin/cadastros?error=conselheiro_invalido#conselheiros");
+  }
+
+  const { error } = await supabase.from("profiles").upsert(payload);
+
+  if (!error) {
+    await insertAuditLog({
+      actorId: profile.id,
+      action: "update",
+      entityTable: "profiles",
+      entityId: payload.id,
+    });
+  }
+
+  redirect("/admin/cadastros#conselheiros");
 }
 
 export async function createMotivoAction(formData: FormData) {
@@ -193,6 +259,10 @@ export async function updateConselhoAction(formData: FormData) {
     telefone: String(formData.get("telefone") ?? ""),
     email: String(formData.get("email") ?? ""),
     horario_atendimento: String(formData.get("horario_atendimento") ?? ""),
+    whatsapp: String(formData.get("whatsapp") ?? ""),
+    facebook_url: String(formData.get("facebook_url") ?? ""),
+    instagram_url: String(formData.get("instagram_url") ?? ""),
+    mapa_url: String(formData.get("mapa_url") ?? ""),
   });
 
   const { error } = await supabase

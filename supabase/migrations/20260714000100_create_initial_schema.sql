@@ -33,6 +33,13 @@ $$;
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   nome text not null,
+  email text,
+  telefone text,
+  cargo text,
+  foto_url text,
+  sobre text,
+  mandato text,
+  exibir_publico boolean not null default false,
   role public.profile_role not null default 'conselheiro',
   ativo boolean not null default true,
   created_at timestamptz not null default now(),

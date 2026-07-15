@@ -19,7 +19,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getPublicConselhoInfo } from "@/lib/public/conselho";
+import {
+  getPublicConselheiros,
+  getPublicConselhoInfo,
+} from "@/lib/public/conselho";
 
 const reasonsToReport = [
   "Violencia fisica, psicologica ou sexual",
@@ -35,7 +38,10 @@ const supportSteps = [
 ];
 
 export default async function Home() {
-  const conselho = await getPublicConselhoInfo();
+  const [conselho, conselheiros] = await Promise.all([
+    getPublicConselhoInfo(),
+    getPublicConselheiros(),
+  ]);
 
   const contactCards = [
     {
@@ -252,6 +258,44 @@ export default async function Home() {
             })}
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-5 py-12">
+        <div className="mb-6 flex flex-col gap-2">
+          <h2 className="text-2xl font-semibold">Equipe do Conselho</h2>
+          <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
+            Conselheiros disponíveis para atendimento e acompanhamento das
+            situações encaminhadas ao Conselho Tutelar.
+          </p>
+        </div>
+        {conselheiros.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {conselheiros.map((conselheiro) => (
+              <Card key={conselheiro.id} className="rounded-lg">
+                <CardHeader>
+                  <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-secondary text-sm font-semibold text-secondary-foreground">
+                    {conselheiro.nome.slice(0, 2).toUpperCase()}
+                  </div>
+                  <CardTitle className="text-lg">{conselheiro.nome}</CardTitle>
+                  <CardDescription>{conselheiro.cargo}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm text-muted-foreground">
+                  {conselheiro.mandato ? (
+                    <p>Mandato: {conselheiro.mandato}</p>
+                  ) : null}
+                  {conselheiro.sobre ? <p>{conselheiro.sobre}</p> : null}
+                  {conselheiro.telefone ? <p>{conselheiro.telefone}</p> : null}
+                  {conselheiro.email ? <p>{conselheiro.email}</p> : null}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <p className="rounded-lg border bg-card p-4 text-sm text-muted-foreground">
+            A equipe sera exibida assim que os conselheiros forem cadastrados
+            para visualizacao publica.
+          </p>
+        )}
       </section>
 
       <footer className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
