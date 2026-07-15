@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signOutAction } from "@/lib/auth/actions";
 import {
   createMedidaAction,
   createMotivoAction,
@@ -45,29 +44,11 @@ function ToggleForm({
 }
 
 export default async function CadastrosPage() {
-  const profile = await requireActiveAdminProfile();
+  await requireActiveAdminProfile();
   const { motivos, medidas, profiles, conselho } = await getAdminCadastrosData();
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-4">
-          <Link href="/admin" className="text-sm font-semibold">
-            Conselho Tutelar
-          </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
-              {profile.role}
-            </Badge>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm">
-                Sair
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto w-full max-w-6xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
@@ -91,7 +72,7 @@ export default async function CadastrosPage() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-2">
-          <Card className="rounded-lg">
+          <Card id="motivos" className="scroll-mt-6 rounded-lg">
             <CardHeader>
               <CardTitle>Motivos de denuncia</CardTitle>
               <CardDescription>Categorias usadas no formulario publico.</CardDescription>
@@ -125,7 +106,7 @@ export default async function CadastrosPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-lg">
+          <Card id="medidas" className="scroll-mt-6 rounded-lg">
             <CardHeader>
               <CardTitle>Medidas protetivas</CardTitle>
               <CardDescription>Medidas usadas em encaminhamentos.</CardDescription>
@@ -161,7 +142,7 @@ export default async function CadastrosPage() {
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-2">
-          <Card className="rounded-lg">
+          <Card id="conselho" className="scroll-mt-6 rounded-lg">
             <CardHeader>
               <CardTitle>Dados institucionais</CardTitle>
               <CardDescription>Informacoes do Conselho Tutelar.</CardDescription>
@@ -221,7 +202,7 @@ export default async function CadastrosPage() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-lg">
+          <Card id="conselheiros" className="scroll-mt-6 rounded-lg">
             <CardHeader>
               <CardTitle>Perfis administrativos</CardTitle>
               <CardDescription>

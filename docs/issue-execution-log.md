@@ -397,3 +397,22 @@ Resultado:
 - Migration idempotente criada para atualizar bancos existentes.
 - Upserts passaram a usar `on conflict (nome) do update`.
 - Testes estaticos adicionados para proteger catalogos obrigatorios e evitar duplicacoes.
+
+## Issue #20 - Criar layout administrativo com sidebar
+
+Tipo da issue: frontend/admin-ui
+Modelo recomendado: gpt-5.6-terra
+Branch base: develop
+Branch da issue: issue/20-admin-sidebar-layout
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Layout compartilhado criado para rotas `/admin`.
+- Sidebar administrativa criada com perfil, navegacao e logout.
+- Links da sidebar ajustados por perfil: conselheiro ve fluxo diario, admin ve manutencoes.
+- Topos administrativos duplicados removidos das paginas principais.
+- Anchors de cadastros adicionadas para Conselheiros, Motivos, Medidas e Conselho.
+- Teste de navegacao administrativa adicionado.

@@ -13,7 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requireAdminProfile } from "@/lib/auth/admin";
-import { signOutAction } from "@/lib/auth/actions";
 import {
   calculatePercent,
   getAdminReportsData,
@@ -73,7 +72,7 @@ function RankingCard({
 export default async function RelatoriosPage({
   searchParams,
 }: RelatoriosPageProps) {
-  const profile = await requireAdminProfile();
+  await requireAdminProfile();
   const params = (await searchParams) ?? {};
   const filters = parseReportFilters(params);
   const data = await getAdminReportsData(filters);
@@ -97,24 +96,6 @@ export default async function RelatoriosPage({
 
   return (
     <main className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-4">
-          <Link href="/admin" className="text-sm font-semibold">
-            Conselho Tutelar
-          </Link>
-          <div className="flex items-center gap-3">
-            <Badge variant="outline" className="hidden rounded-lg sm:inline-flex">
-              {profile.role}
-            </Badge>
-            <form action={signOutAction}>
-              <Button type="submit" variant="outline" size="sm">
-                Sair
-              </Button>
-            </form>
-          </div>
-        </div>
-      </header>
-
       <section className="mx-auto w-full max-w-6xl px-5 py-8">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
