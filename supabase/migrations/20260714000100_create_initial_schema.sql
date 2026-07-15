@@ -172,6 +172,15 @@ create table public.encaminhamentos (
   constraint encaminhamentos_descricao_not_blank check (length(trim(descricao)) > 0)
 );
 
+create table public.chamado_medidas_protetivas (
+  id uuid primary key default gen_random_uuid(),
+  chamado_id uuid not null references public.chamados(id) on delete cascade,
+  medida_protetiva_id uuid not null references public.medidas_protetivas(id),
+  responsavel_id uuid references public.profiles(id) on delete set null,
+  observacoes text,
+  created_at timestamptz not null default now()
+);
+
 create table public.audit_logs (
   id uuid primary key default gen_random_uuid(),
   actor_id uuid references public.profiles(id) on delete set null,
@@ -209,6 +218,11 @@ create index idx_encaminhamentos_medida_protetiva_id
   on public.encaminhamentos(medida_protetiva_id);
 create index idx_encaminhamentos_data_encaminhamento
   on public.encaminhamentos(data_encaminhamento desc);
+
+create index idx_chamado_medidas_chamado_id
+  on public.chamado_medidas_protetivas(chamado_id);
+create index idx_chamado_medidas_medida_id
+  on public.chamado_medidas_protetivas(medida_protetiva_id);
 
 create index idx_audit_logs_actor_id on public.audit_logs(actor_id);
 create index idx_audit_logs_entity on public.audit_logs(entity_table, entity_id);

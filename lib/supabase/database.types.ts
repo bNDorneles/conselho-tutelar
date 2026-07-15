@@ -395,6 +395,55 @@ export type Database = {
           },
         ];
       };
+      chamado_medidas_protetivas: {
+        Row: {
+          id: string;
+          chamado_id: string;
+          medida_protetiva_id: string;
+          responsavel_id: string | null;
+          observacoes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          chamado_id: string;
+          medida_protetiva_id: string;
+          responsavel_id?: string | null;
+          observacoes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          chamado_id?: string;
+          medida_protetiva_id?: string;
+          responsavel_id?: string | null;
+          observacoes?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chamado_medidas_protetivas_chamado_id_fkey";
+            columns: ["chamado_id"];
+            isOneToOne: false;
+            referencedRelation: "chamados";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chamado_medidas_protetivas_medida_protetiva_id_fkey";
+            columns: ["medida_protetiva_id"];
+            isOneToOne: false;
+            referencedRelation: "medidas_protetivas";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "chamado_medidas_protetivas_responsavel_id_fkey";
+            columns: ["responsavel_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       audit_logs: {
         Row: {
           id: string;
