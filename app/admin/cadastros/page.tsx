@@ -280,7 +280,6 @@ export default async function CadastrosPage() {
               <form
                 action={upsertConselheiroAction}
                 className="grid gap-3"
-                encType="multipart/form-data"
               >
                 <Input name="id" placeholder="UID do usuario no Supabase Auth" required />
                 <Input name="nome" placeholder="Nome do conselheiro" required />
