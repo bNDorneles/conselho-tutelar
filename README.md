@@ -6,7 +6,7 @@ Esta implementacao sera reconstruida do zero com Next.js, TypeScript, Supabase, 
 
 ## Estado Atual
 
-O projeto esta com a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2, os helpers Supabase criados pela Issue #3, o schema inicial versionado pela Issue #4, o formulario anonimo da Issue #8, o dashboard administrativo da Issue #9 e a triagem Kanban da Issue #10.
+O projeto esta com a base Next.js inicial criada pela Issue #1, a fundacao visual shadcn/ui criada pela Issue #2, os helpers Supabase criados pela Issue #3, o schema inicial versionado pela Issue #4, o formulario anonimo da Issue #8, o dashboard administrativo da Issue #9, a triagem Kanban da Issue #10 e a criacao de chamados da Issue #11.
 
 Documentacao principal:
 
@@ -33,7 +33,7 @@ Criar uma aplicacao publicavel e adequada para uso real pelo Conselho Tutelar, c
 - `/login`: acesso administrativo via Supabase Auth.
 - `/admin`: dashboard administrativo protegido por login e profile ativo.
 - `/admin/denuncias`: Kanban administrativo de triagem de denuncias.
-- `/admin/denuncias/[id]`: detalhe protegido da denuncia com auditoria de leitura.
+- `/admin/denuncias/[id]`: detalhe protegido da denuncia com auditoria de leitura e criacao de chamado.
 - `components/ui/`: componentes shadcn/ui adicionados para a fundacao visual.
 - `lib/utils.ts`: utilitario base do shadcn/ui.
 - `lib/supabase/`: helpers de configuracao e clientes Supabase para browser/server.

@@ -225,3 +225,25 @@ Resultado:
 - `/admin/denuncias/[id]` criado para detalhe protegido da denuncia.
 - Auditoria de leitura e mudanca de status registrada em `audit_logs`.
 
+## Issue #11 - Criar chamado a partir de denuncia
+
+Tipo da issue: fullstack/business
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/11-create-chamado-from-denuncia
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/superpowers/specs/2026-07-14-issue-11-create-chamado-design.md
+- docs/superpowers/plans/2026-07-14-issue-11-create-chamado.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Botao de criacao de chamado adicionado em `/admin/denuncias/[id]`.
+- Criacao de `vitimas` opcional quando a denuncia possui dados da vitima.
+- Criacao de `chamados` com status inicial `aberto`.
+- Denuncia marcada como `convertida_em_chamado`.
+- Auditoria criada para chamado e mudanca de status da denuncia.
