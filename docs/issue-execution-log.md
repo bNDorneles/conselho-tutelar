@@ -453,3 +453,21 @@ Resultado:
 - Kanban/listagem mostra responsavel e permite filtro por conselheiro.
 - Criacao de chamado passa a exigir denuncia em analise.
 - Dados complementares da vitima sao carregados para a criacao do atendimento.
+
+## Issue #23 - Implementar Kanban com arrastar e soltar
+
+Tipo da issue: frontend/fullstack
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/23-dnd-kanban-denuncias
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `@dnd-kit/core` adicionado ao projeto.
+- Kanban de denuncias extraido para componente client.
+- Cards podem ser arrastados entre colunas permitidas.
+- Mudanca por drag-and-drop chama Server Action, registra auditoria e revalida a tela.
+- Botoes antigos de movimentacao continuam disponiveis como alternativa.

@@ -1,8 +1,9 @@
-import { ArrowRight, Filter } from "lucide-react";
+import { Filter } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DenunciasKanban } from "@/components/admin/denuncias-kanban";
 import {
   Card,
   CardContent,
@@ -16,19 +17,15 @@ import { requireAdminProfile } from "@/lib/auth/admin";
 import { getConselheiroOptions } from "@/lib/admin/chamados";
 import {
   buildDenunciaStatusGroups,
-  canTransitionDenunciaStatus,
   denunciaStatusColumns,
   denunciaStatusLabels,
   getAdminDenuncias,
   getMotivosDenunciaOptions,
+  moveDenunciaStatusAction,
   parseDenunciaFilters,
   updateDenunciaStatusAction,
   type DenunciaStatus,
 } from "@/lib/admin/denuncias";
-import {
-  formatDashboardDate,
-  summarizeText,
-} from "@/lib/admin/dashboard";
 
 export const dynamic = "force-dynamic";
 
@@ -195,94 +192,12 @@ export default async function AdminDenunciasPage({
           </p>
         ) : null}
 
-        <div className="grid gap-4 xl:grid-cols-4">
-          {denunciaStatusColumns.map((status) => (
-            <section key={status} className="min-h-64 rounded-lg border bg-card">
-              <div className="flex items-center justify-between border-b px-4 py-3">
-                <h2 className="text-sm font-semibold">
-                  {denunciaStatusLabels[status]}
-                </h2>
-                <Badge variant="secondary" className="rounded-lg">
-                  {groups[status].length}
-                </Badge>
-              </div>
-              <div className="space-y-3 p-3">
-                {groups[status].length > 0 ? (
-                  groups[status].map((denuncia) => (
-                    <Card key={denuncia.id} className="rounded-lg">
-                      <CardHeader className="space-y-2 p-4">
-                        <div className="flex items-center justify-between gap-3">
-                          <Badge variant="outline" className="rounded-lg">
-                            {denuncia.motivos_denuncia?.nome ?? "Sem motivo"}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {formatDashboardDate(denuncia.created_at)}
-                          </span>
-                        </div>
-                        <CardDescription className="leading-6">
-                          {summarizeText(denuncia.relato, 120)}
-                        </CardDescription>
-                        <p className="text-xs text-muted-foreground">
-                          Responsavel: {denuncia.profiles?.nome ?? "Nao atribuido"}
-                        </p>
-                      </CardHeader>
-                      <CardContent className="space-y-3 p-4 pt-0">
-                        <Link
-                          href={`/admin/denuncias/${denuncia.id}`}
-                          className="inline-flex h-8 w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80"
-                        >
-                          Abrir detalhe
-                          <ArrowRight className="size-4" aria-hidden="true" />
-                        </Link>
-                        {statusActions[status].length > 0 ? (
-                          <div className="grid gap-2">
-                            {statusActions[status].map((nextStatus) =>
-                              canTransitionDenunciaStatus(status, nextStatus) ? (
-                                <form
-                                  key={nextStatus}
-                                  action={updateDenunciaStatusAction}
-                                >
-                                  <input
-                                    type="hidden"
-                                    name="denuncia_id"
-                                    value={denuncia.id}
-                                  />
-                                  <input
-                                    type="hidden"
-                                    name="from_status"
-                                    value={status}
-                                  />
-                                  <input
-                                    type="hidden"
-                                    name="to_status"
-                                    value={nextStatus}
-                                  />
-                                  <Button
-                                    type="submit"
-                                    variant="outline"
-                                    size="sm"
-                                    className="w-full"
-                                  >
-                                    Mover para{" "}
-                                    {denunciaStatusLabels[nextStatus]}
-                                  </Button>
-                                </form>
-                              ) : null
-                            )}
-                          </div>
-                        ) : null}
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
-                    Nenhuma denuncia nesta coluna.
-                  </p>
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
+        <DenunciasKanban
+          groups={groups}
+          statusActions={statusActions}
+          updateStatusAction={updateDenunciaStatusAction}
+          moveStatusAction={moveDenunciaStatusAction}
+        />
       </section>
     </main>
   );
