@@ -287,3 +287,21 @@ Resultado:
 - Historico de encaminhamentos exibido no detalhe do chamado.
 - Medida protetiva opcional integrada ao encaminhamento.
 - Auditoria criada ao registrar encaminhamento.
+
+## Issue #14 - Implementar cadastros auxiliares
+
+Tipo da issue: fullstack/admin
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/14-admin-maintenance
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `/admin/cadastros` criado com acesso restrito a admin ativo.
+- Criacao e ativacao/desativacao de motivos de denuncia.
+- Criacao e ativacao/desativacao de medidas protetivas.
+- Edicao de dados institucionais do Conselho Tutelar.
+- Listagem e ativacao/desativacao de perfis existentes.

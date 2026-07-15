@@ -344,6 +344,7 @@ Ja existem:
 - Alteracao auditada de status de chamados.
 - Registro de encaminhamentos no detalhe do chamado.
 - Historico/timeline de encaminhamentos por chamado.
+- Cadastros auxiliares admin-only em `/admin/cadastros`.
 
 Ainda nao existem:
 
