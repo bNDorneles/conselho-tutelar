@@ -27,6 +27,7 @@ describe("getAdminNavItems", () => {
       "Medidas",
       "Conselho",
       "Relatorios",
+      "Auditoria",
       "Area publica",
     ]);
   });

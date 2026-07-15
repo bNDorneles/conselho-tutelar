@@ -12,14 +12,16 @@ describe("admin visual status helpers", () => {
     expect(getAreaAccent("chamados").label).toBe("Chamados");
     expect(getAreaAccent("cadastros").label).toBe("Cadastros");
     expect(getAreaAccent("relatorios").label).toBe("Relatorios");
+    expect(getAreaAccent("auditoria").label).toBe("Auditoria");
     expect(
       new Set([
         getAreaAccent("denuncias").className,
         getAreaAccent("chamados").className,
         getAreaAccent("cadastros").className,
         getAreaAccent("relatorios").className,
+        getAreaAccent("auditoria").className,
       ]),
-    ).toHaveLength(4);
+    ).toHaveLength(5);
   });
 
   it("maps operational stages to readable status tones", () => {

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Eye } from "lucide-react";
+import { ArrowLeft, Eye, History } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,11 @@ import {
 import { formatDashboardDate } from "@/lib/admin/dashboard";
 import { getDenunciaOperationalStage } from "@/lib/admin/operational-flow";
 import { getAreaAccent } from "@/lib/admin/visual-status";
+import {
+  formatAuditAction,
+  getDenunciaAuditLogs,
+  summarizeAuditMetadata,
+} from "@/lib/admin/auditoria";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +79,7 @@ export default async function DenunciaDetailPage({
   }
 
   await recordDenunciaRead(profile.id, denuncia.id);
+  const auditLogs = await getDenunciaAuditLogs(denuncia.id);
   const canCreateChamado = canCreateChamadoFromDenuncia(denuncia);
   const showSuccess = query?.success === "chamado_criado";
   const showError = Boolean(query?.error);
@@ -211,6 +217,53 @@ export default async function DenunciaDetailPage({
             ) : (
               <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
                 Esta denuncia ja foi convertida em chamado.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="mt-5 rounded-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <History className="size-4 text-primary" aria-hidden="true" />
+              Historico da denuncia
+            </CardTitle>
+            <CardDescription>
+              Registro de leituras, atribuicoes e mudancas realizadas nesta
+              denuncia.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {auditLogs.length > 0 ? (
+              auditLogs.map((log) => (
+                <div
+                  key={log.id}
+                  className="grid gap-3 rounded-lg border bg-background p-3 md:grid-cols-[170px_1fr]"
+                >
+                  <div>
+                    <p className="text-sm font-semibold">
+                      {formatAuditAction(log.action)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatDashboardDate(log.created_at)}
+                    </p>
+                  </div>
+                  <div className="min-w-0 space-y-1">
+                    <p className="text-sm">
+                      Responsavel:{" "}
+                      <span className="font-medium">
+                        {log.profiles?.nome ?? "Sistema/usuario removido"}
+                      </span>
+                    </p>
+                    <p className="break-words text-sm text-muted-foreground">
+                      {summarizeAuditMetadata(log.metadata)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
+                Nenhum historico registrado para esta denuncia.
               </p>
             )}
           </CardContent>
