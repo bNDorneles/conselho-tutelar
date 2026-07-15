@@ -601,3 +601,24 @@ Resultado:
 - Tela de exportacao mostra totais, blocos selecionados e barras legiveis para salvar em PDF.
 - Botao `Gerar PDF` aciona a impressao do navegador em uma pagina limpa.
 - Teste adicionado para montagem segura da query de exportacao.
+
+## Issue #32 - Polimento final de fluxos e relatorios
+
+Tipo da issue: frontend/quality
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/32-polimento-final-fluxos-relatorios
+Comandos de verificacao executados:
+- npm.cmd test
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Cadastros de motivos e medidas passaram a exibir textos longos sem corte.
+- Edicao de catalogos ficou recolhivel, com campos amplos e textarea para descricao.
+- Kanban passou a funcionar como esteira horizontal com colunas mais largas.
+- Drag-and-drop agora respeita a diferenca entre etapa operacional e status real da denuncia.
+- Exportacao de relatorios ganhou formato documental, com resumo executivo, tabelas e barras compactas.
+- Sidebar administrativa foi escondida na impressao para nao sair no PDF.
+- CSS de impressao global ajustado para A4, margens e visual limpo.
+- Rotulos tecnicos dos relatorios foram convertidos para texto final amigavel.

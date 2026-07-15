@@ -34,6 +34,22 @@ export const reportCategoryLabels: Record<ReportCategory, string> = {
   medidas_mais_aplicadas: "Medidas protetivas",
 };
 
+const reportStatusLabels: Record<string, string> = {
+  aberto: "Aberto",
+  em_atendimento: "Em atendimento",
+  finalizado: "Finalizado",
+};
+
+export function formatReportLabel(value: string | null | undefined) {
+  const label = value?.trim();
+
+  if (!label) {
+    return "Nao informado";
+  }
+
+  return reportStatusLabels[label] ?? label;
+}
+
 export function parseReportFilters(
   input: Record<string, string | string[] | undefined>
 ): ReportFilters {
@@ -180,7 +196,7 @@ export async function getAdminReportsData(filters: ReportFilters) {
     ),
     chamadosPorStatus: countByLabel(
       chamadosRows.map((row) => ({
-        label: row.status,
+        label: formatReportLabel(row.status),
       }))
     ),
     chamadosPorConselheiro: countByLabel(

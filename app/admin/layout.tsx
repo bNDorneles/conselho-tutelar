@@ -16,11 +16,13 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-background lg:flex">
-      <AdminSidebar
-        profileName={profile.nome}
-        profileRole={profile.role}
-        items={navItems}
-      />
+      <div className="print:hidden">
+        <AdminSidebar
+          profileName={profile.nome}
+          profileRole={profile.role}
+          items={navItems}
+        />
+      </div>
       <div className="min-w-0 flex-1">{children}</div>
     </div>
   );

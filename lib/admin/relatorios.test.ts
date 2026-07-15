@@ -4,6 +4,7 @@ import {
   buildReportExportQuery,
   calculatePercent,
   countByLabel,
+  formatReportLabel,
   parseReportCategories,
   parseReportFilters,
 } from "./relatorios";
@@ -46,6 +47,12 @@ describe("relatorios helpers", () => {
   it("calculates bar percentages safely", () => {
     expect(calculatePercent(2, 4)).toBe(50);
     expect(calculatePercent(2, 0)).toBe(0);
+  });
+
+  it("formats technical report labels for final documents", () => {
+    expect(formatReportLabel("em_atendimento")).toBe("Em atendimento");
+    expect(formatReportLabel("finalizado")).toBe("Finalizado");
+    expect(formatReportLabel(null)).toBe("Nao informado");
   });
 
   it("parses selected report categories with defaults and invalid values ignored", () => {
