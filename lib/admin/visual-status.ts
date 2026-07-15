@@ -1,6 +1,11 @@
 import type { OperationalStage } from "./operational-flow";
 
-export type AdminArea = "denuncias" | "chamados" | "cadastros" | "relatorios";
+export type AdminArea =
+  | "denuncias"
+  | "chamados"
+  | "cadastros"
+  | "relatorios"
+  | "auditoria";
 export type StatusTone = "success" | "warning" | "info" | "neutral" | "danger";
 
 const areaAccents: Record<AdminArea, { label: string; className: string }> = {
@@ -19,6 +24,10 @@ const areaAccents: Record<AdminArea, { label: string; className: string }> = {
   relatorios: {
     label: "Relatorios",
     className: "border-violet-200 bg-violet-50 text-violet-900",
+  },
+  auditoria: {
+    label: "Auditoria",
+    className: "border-rose-200 bg-rose-50 text-rose-900",
   },
 };
 

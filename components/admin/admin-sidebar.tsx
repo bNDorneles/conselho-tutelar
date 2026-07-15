@@ -10,6 +10,7 @@ import {
   LogOut,
   Scale,
   ShieldCheck,
+  History,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -29,6 +30,7 @@ const navIcons = {
   Medidas: ShieldCheck,
   Conselho: Landmark,
   Relatorios: BarChart3,
+  Auditoria: History,
   "Area publica": Home,
 };
 
