@@ -324,3 +324,20 @@ Resultado:
 - Chamados por status e por conselheiro exibidos.
 - Encaminhamentos por periodo exibidos.
 - Medidas protetivas mais aplicadas exibidas.
+
+## Issue #16 - Preparar deploy na Vercel
+
+Tipo da issue: deploy/config
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/16-vercel-deploy
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Guia de deploy criado em `docs/deploy-vercel.md`.
+- README atualizado com resumo de deploy.
+- `.env.local.example` documentado.
+- Checklist de Supabase Auth, variaveis Vercel e pos-deploy criado.
