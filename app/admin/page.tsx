@@ -98,12 +98,20 @@ export default async function AdminPage() {
             administradores ativos.
           </p>
           {profile.role === "admin" ? (
-            <Link
-              href="/admin/cadastros"
-              className="mt-4 inline-flex h-8 items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
-            >
-              Cadastros auxiliares
-            </Link>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                href="/admin/cadastros"
+                className="inline-flex h-8 items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
+              >
+                Cadastros auxiliares
+              </Link>
+              <Link
+                href="/admin/relatorios"
+                className="inline-flex h-8 items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
+              >
+                Relatorios
+              </Link>
+            </div>
           ) : null}
         </div>
 

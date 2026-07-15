@@ -305,3 +305,22 @@ Resultado:
 - Criacao e ativacao/desativacao de medidas protetivas.
 - Edicao de dados institucionais do Conselho Tutelar.
 - Listagem e ativacao/desativacao de perfis existentes.
+
+## Issue #15 - Implementar relatorios basicos
+
+Tipo da issue: fullstack/reporting
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/15-basic-reports
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `/admin/relatorios` criado.
+- Filtro por periodo criado.
+- Denuncias por motivo exibidas.
+- Chamados por status e por conselheiro exibidos.
+- Encaminhamentos por periodo exibidos.
+- Medidas protetivas mais aplicadas exibidas.
