@@ -564,3 +564,21 @@ Resultado:
 - Telefone fixo e plantao/WhatsApp foram separados na area administrativa e publica.
 - Home publica exibe foto real do conselheiro quando `foto_url` estiver disponivel.
 - Configuracao de imagens remotas do Next permite imagens do Supabase.
+
+## Issue #30 - Relatorios gerenciais avancados
+
+Tipo da issue: frontend/data-viz
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/30-relatorios-graficos-comparacao
+Comandos de verificacao executados:
+- npm.cmd run test -- lib/admin/relatorios.test.ts
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Relatorios ganharam selecao de categorias por checkbox.
+- Graficos de barras foram mantidos para rankings.
+- Graficos donut em CSS foram adicionados para distribuicoes.
+- Comparacao entre blocos pode ser feita selecionando duas ou mais categorias.
+- Teste adicionado para parsing de categorias selecionadas e fallback padrao.
