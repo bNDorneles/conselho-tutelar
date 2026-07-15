@@ -337,10 +337,11 @@ Ja existem:
 - Kanban de triagem em `/admin/denuncias`.
 - Detalhe protegido de denuncia em `/admin/denuncias/[id]`.
 - Auditoria de leitura e mudanca de status para denuncias.
+- Criacao de chamado a partir do detalhe da denuncia.
+- Criacao opcional de vitima quando a denuncia tiver dados informados.
 
 Ainda nao existem:
 
-- Conversao de denuncia em chamado.
 - Tela de chamados.
 - Deploy.
 

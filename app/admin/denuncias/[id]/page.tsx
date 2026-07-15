@@ -18,6 +18,10 @@ import {
   getAdminDenunciaDetail,
   recordDenunciaRead,
 } from "@/lib/admin/denuncias";
+import {
+  canCreateChamadoFromDenuncia,
+  createChamadoFromDenunciaAction,
+} from "@/lib/admin/chamados";
 import { formatDashboardDate } from "@/lib/admin/dashboard";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +29,10 @@ export const dynamic = "force-dynamic";
 type DenunciaDetailPageProps = {
   params: Promise<{
     id: string;
+  }>;
+  searchParams?: Promise<{
+    error?: string;
+    success?: string;
   }>;
 };
 
@@ -47,9 +55,11 @@ function DetailItem({
 
 export default async function DenunciaDetailPage({
   params,
+  searchParams,
 }: DenunciaDetailPageProps) {
   const profile = await requireAdminProfile();
   const { id } = await params;
+  const query = await searchParams;
   const denuncia = await getAdminDenunciaDetail(id);
 
   if (!denuncia) {
@@ -57,6 +67,9 @@ export default async function DenunciaDetailPage({
   }
 
   await recordDenunciaRead(profile.id, denuncia.id);
+  const canCreateChamado = canCreateChamadoFromDenuncia(denuncia);
+  const showSuccess = query?.success === "chamado_criado";
+  const showError = Boolean(query?.error);
 
   return (
     <main className="min-h-screen bg-background">
@@ -146,6 +159,37 @@ export default async function DenunciaDetailPage({
             </CardContent>
           </Card>
         </div>
+
+        <Card className="mt-5 rounded-lg border-primary/20">
+          <CardHeader>
+            <CardTitle>Criar chamado</CardTitle>
+            <CardDescription>
+              Formalize o atendimento interno vinculado a esta denuncia.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {showSuccess ? (
+              <p className="rounded-lg border border-primary/20 bg-primary/8 px-3 py-2 text-sm text-primary">
+                Chamado criado e denuncia marcada como convertida.
+              </p>
+            ) : null}
+            {showError ? (
+              <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                Nao foi possivel criar o chamado para esta denuncia.
+              </p>
+            ) : null}
+            {canCreateChamado ? (
+              <form action={createChamadoFromDenunciaAction}>
+                <input type="hidden" name="denuncia_id" value={denuncia.id} />
+                <Button type="submit">Criar chamado</Button>
+              </form>
+            ) : (
+              <p className="rounded-lg border bg-background p-3 text-sm text-muted-foreground">
+                Esta denuncia ja foi convertida em chamado.
+              </p>
+            )}
+          </CardContent>
+        </Card>
 
         <Card className="mt-5 rounded-lg">
           <CardHeader>
