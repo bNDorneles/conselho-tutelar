@@ -1,4 +1,4 @@
-import { LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowLeft, LockKeyhole, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { signInWithPasswordAction } from "@/lib/auth/actions";
@@ -44,6 +44,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               <ShieldCheck className="size-5" aria-hidden="true" />
             </span>
             Conselho Tutelar
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex h-8 items-center justify-center gap-2 rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
+          >
+            <ArrowLeft className="size-4" aria-hidden="true" />
+            Voltar ao inicio
           </Link>
         </div>
       </header>
