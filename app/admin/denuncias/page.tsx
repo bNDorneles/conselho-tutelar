@@ -20,14 +20,15 @@ import {
   updateDenunciaStatusAction,
 } from "@/lib/admin/denuncia-actions";
 import {
-  buildDenunciaStatusGroups,
   denunciaStatusColumns,
   denunciaStatusLabels,
+  buildOperationalStageGroups,
   getAdminDenuncias,
   getMotivosDenunciaOptions,
   parseDenunciaFilters,
   type DenunciaStatus,
 } from "@/lib/admin/denuncias";
+import type { OperationalStage } from "@/lib/admin/operational-flow";
 
 export const dynamic = "force-dynamic";
 
@@ -35,11 +36,10 @@ type AdminDenunciasPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
-const statusActions: Record<DenunciaStatus, DenunciaStatus[]> = {
+const statusActions: Partial<Record<OperationalStage, DenunciaStatus[]>> = {
   recebida: ["atribuida"],
   atribuida: ["em_analise", "recebida"],
   em_analise: ["arquivada"],
-  convertida_em_chamado: [],
   arquivada: ["em_analise"],
 };
 
@@ -68,7 +68,7 @@ export default async function AdminDenunciasPage({
     getMotivosDenunciaOptions(),
     getConselheiroOptions(),
   ]);
-  const groups = buildDenunciaStatusGroups(denuncias);
+  const groups = buildOperationalStageGroups(denuncias);
   const errorMessage = getErrorMessage(params.error);
 
   return (

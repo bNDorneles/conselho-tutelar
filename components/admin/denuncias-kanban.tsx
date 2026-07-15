@@ -18,17 +18,23 @@ import {
 } from "@/components/ui/card";
 import {
   canTransitionDenunciaStatus,
-  denunciaStatusColumns,
   denunciaStatusLabels,
+  isDenunciaStatus,
   type DenunciaStatus,
 } from "@/lib/admin/denuncia-workflow";
 import type { AdminDenuncia } from "@/lib/admin/denuncia-types";
+import {
+  getDenunciaOperationalStage,
+  operationalStageColumns,
+  operationalStageLabels,
+  type OperationalStage,
+} from "@/lib/admin/operational-flow";
 
-type StatusGroups = Record<DenunciaStatus, AdminDenuncia[]>;
+type StatusGroups = Record<OperationalStage, AdminDenuncia[]>;
 
 type DenunciasKanbanProps = {
   groups: StatusGroups;
-  statusActions: Record<DenunciaStatus, DenunciaStatus[]>;
+  statusActions: Partial<Record<OperationalStage, DenunciaStatus[]>>;
   updateStatusAction: (formData: FormData) => void;
   moveStatusAction: (input: {
     denunciaId: string;
@@ -52,7 +58,7 @@ function DroppableColumn({
   status,
   children,
 }: {
-  status: DenunciaStatus;
+  status: OperationalStage;
   children: React.ReactNode;
 }) {
   const { isOver, setNodeRef } = useDroppable({ id: status });
@@ -109,9 +115,13 @@ export function DenunciasKanban({
     const fromStatus = event.active.data.current?.status as
       | DenunciaStatus
       | undefined;
-    const toStatus = event.over?.id as DenunciaStatus | undefined;
+    const toStatus = String(event.over?.id ?? "");
 
-    if (!fromStatus || !toStatus || fromStatus === toStatus) {
+    if (
+      !fromStatus ||
+      !isDenunciaStatus(toStatus) ||
+      fromStatus === toStatus
+    ) {
       return;
     }
 
@@ -132,12 +142,12 @@ export function DenunciasKanban({
           Atualizando Kanban...
         </p>
       ) : null}
-      <div className="grid gap-4 xl:grid-cols-5">
-        {denunciaStatusColumns.map((status) => (
+      <div className="grid gap-4 xl:grid-cols-4 2xl:grid-cols-8">
+        {operationalStageColumns.map((status) => (
           <DroppableColumn key={status} status={status}>
             <div className="flex items-center justify-between border-b px-4 py-3">
               <h2 className="text-sm font-semibold">
-                {denunciaStatusLabels[status]}
+                {operationalStageLabels[status]}
               </h2>
               <Badge variant="secondary" className="rounded-lg">
                 {groups[status].length}
@@ -161,8 +171,16 @@ export function DenunciasKanban({
                           {summarizeText(denuncia.relato, 120)}
                         </CardDescription>
                         <p className="text-xs text-muted-foreground">
-                          Responsavel: {denuncia.profiles?.nome ?? "Nao atribuido"}
+                          Responsavel:{" "}
+                          {denuncia.profiles?.nome ?? "Nao atribuido"}
                         </p>
+                          {denuncia.chamados?.[0] ? (
+                            <p className="text-xs font-medium text-primary">
+                              {operationalStageLabels[
+                                getDenunciaOperationalStage(denuncia)
+                              ]}
+                            </p>
+                          ) : null}
                       </CardHeader>
                       <CardContent className="space-y-3 p-4 pt-0">
                         <Link
@@ -172,10 +190,13 @@ export function DenunciasKanban({
                           Abrir detalhe
                           <ArrowRight className="size-4" aria-hidden="true" />
                         </Link>
-                        {statusActions[status].length > 0 ? (
+                        {(statusActions[status]?.length ?? 0) > 0 ? (
                           <div className="grid gap-2">
-                            {statusActions[status].map((nextStatus) =>
-                              canTransitionDenunciaStatus(status, nextStatus) ? (
+                            {statusActions[status]?.map((nextStatus) =>
+                              canTransitionDenunciaStatus(
+                                denuncia.status,
+                                nextStatus,
+                              ) ? (
                                 <form
                                   key={nextStatus}
                                   action={updateStatusAction}
@@ -188,7 +209,7 @@ export function DenunciasKanban({
                                   <input
                                     type="hidden"
                                     name="from_status"
-                                    value={status}
+                                    value={denuncia.status}
                                   />
                                   <input
                                     type="hidden"

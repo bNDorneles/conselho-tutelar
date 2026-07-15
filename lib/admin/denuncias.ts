@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "../supabase/server";
 import type { Database } from "../supabase/database.types";
 import type { AdminDenuncia, DenunciaFilters } from "./denuncia-types";
+import { buildOperationalStageGroups } from "./operational-flow";
 import {
   canTransitionDenunciaStatus,
   denunciaStatusColumns,
@@ -15,6 +16,7 @@ export {
   canTransitionDenunciaStatus,
   denunciaStatusColumns,
   denunciaStatusLabels,
+  buildOperationalStageGroups,
   type AdminDenuncia,
   type DenunciaFilters,
   type DenunciaStatus,
@@ -122,7 +124,7 @@ export async function getAdminDenuncias(filters: DenunciaFilters) {
   let query = supabase
     .from("denuncias")
     .select(
-      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,vitima_nome_pai_informado,vitima_nome_mae_informado,vitima_escola_informada,vitima_genero_informado,conselheiro_responsavel_id,observacoes_internas,created_at,updated_at,motivos_denuncia(nome),profiles!denuncias_conselheiro_responsavel_id_fkey(nome)"
+      "id,motivo_id,status,relato,local_ocorrencia,vitima_nome_informado,vitima_idade_informada,vitima_endereco_informado,vitima_nome_pai_informado,vitima_nome_mae_informado,vitima_escola_informada,vitima_genero_informado,conselheiro_responsavel_id,observacoes_internas,created_at,updated_at,motivos_denuncia(nome),profiles!denuncias_conselheiro_responsavel_id_fkey(nome),chamados(id,status,data_fechamento,chamado_medidas_protetivas(id),encaminhamentos(id))"
     )
     .order("created_at", { ascending: false });
 

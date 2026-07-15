@@ -489,3 +489,22 @@ Resultado:
 - Helpers e action criados para aplicar medida protetiva no chamado.
 - Detalhe do chamado ganhou formulario de aplicacao de medida e lista de medidas aplicadas.
 - Encaminhamentos continuam registrando relato, destino e historico do que foi feito.
+
+## Issue #26 - Fluxo visual completo do atendimento
+
+Tipo da issue: fullstack/business
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/26-fluxo-operacional-completo
+Comandos de verificacao executados:
+- npm.cmd test
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Helper puro criado para derivar etapa operacional de denuncia/chamado.
+- Kanban de denuncias passou a exibir o fluxo completo: recebida, atribuida, em analise, chamado aberto, medida protetiva, encaminhamento, finalizado e arquivada.
+- Query administrativa de denuncias agora carrega chamado vinculado, medidas aplicadas e encaminhamentos para atualizar a etapa automaticamente.
+- Cards convertidos em chamado aparecem na etapa operacional correta sem voltar para analise.
+- Detalhe do chamado passou a mostrar etapa operacional da denuncia vinculada, evitando exibir `em_analise` quando o atendimento ja foi finalizado.
+- Testes adicionados para fluxo operacional, agrupamento derivado e exibicao de chamado finalizado.

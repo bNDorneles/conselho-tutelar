@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireAdminProfile } from "../auth/admin";
 import { createServerSupabaseClient } from "../supabase/server";
 import type { Database } from "../supabase/database.types";
+import { denunciaStatusLabels } from "./denuncia-workflow";
 import { getAdminDenunciaDetail, type AdminDenuncia } from "./denuncias";
 
 type VitimaInsert = Database["public"]["Tables"]["vitimas"]["Insert"];
@@ -158,6 +159,20 @@ export function buildChamadoStatusUpdate(status: ChamadoStatus): ChamadoUpdate {
     status,
     data_fechamento: status === "finalizado" ? new Date().toISOString() : null,
   };
+}
+
+export function getLinkedDenunciaStatusLabel({
+  chamadoStatus,
+  denunciaStatus,
+}: {
+  chamadoStatus: ChamadoStatus;
+  denunciaStatus: Database["public"]["Enums"]["denuncia_status"];
+}) {
+  if (chamadoStatus === "finalizado") {
+    return "Atendimento finalizado";
+  }
+
+  return denunciaStatusLabels[denunciaStatus];
 }
 
 async function insertAuditLog(args: {

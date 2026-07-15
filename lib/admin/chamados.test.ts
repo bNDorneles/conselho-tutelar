@@ -7,6 +7,7 @@ import {
   canTransitionChamadoStatus,
   canCreateChamadoFromDenuncia,
   denunciaHasVictimaInfo,
+  getLinkedDenunciaStatusLabel,
   parseChamadoFilters,
 } from "./chamados";
 import type { AdminDenuncia } from "./denuncias";
@@ -115,5 +116,21 @@ describe("chamado conversion helpers", () => {
       status: "em_atendimento",
       data_fechamento: null,
     });
+  });
+
+  it("shows finalized atendimento instead of active denuncia analysis", () => {
+    expect(
+      getLinkedDenunciaStatusLabel({
+        chamadoStatus: "finalizado",
+        denunciaStatus: "em_analise",
+      }),
+    ).toBe("Atendimento finalizado");
+
+    expect(
+      getLinkedDenunciaStatusLabel({
+        chamadoStatus: "aberto",
+        denunciaStatus: "convertida_em_chamado",
+      }),
+    ).toBe("Convertida em chamado");
   });
 });

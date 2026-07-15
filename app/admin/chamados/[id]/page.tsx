@@ -16,6 +16,7 @@ import {
   chamadoStatusLabels,
   canTransitionChamadoStatus,
   getAdminChamadoDetail,
+  getLinkedDenunciaStatusLabel,
   recordChamadoRead,
   updateChamadoStatusAction,
   type ChamadoStatus,
@@ -222,7 +223,13 @@ export default async function ChamadoDetailPage({
             <CardContent className="space-y-3">
               {chamado.denuncias ? (
                 <>
-                  <DetailItem label="Status da denuncia" value={chamado.denuncias.status} />
+                  <DetailItem
+                    label="Etapa operacional"
+                    value={getLinkedDenunciaStatusLabel({
+                      chamadoStatus: chamado.status,
+                      denunciaStatus: chamado.denuncias.status,
+                    })}
+                  />
                   <p className="rounded-lg border bg-background p-3 text-sm leading-6 text-muted-foreground">
                     {chamado.denuncias.relato}
                   </p>
