@@ -1,7 +1,7 @@
-import { ArrowLeft, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowLeft, MailCheck, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
-import { signInWithPasswordAction } from "@/lib/auth/actions";
+import { requestPasswordResetAction } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,37 +13,31 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-type LoginPageProps = {
+type RecuperarSenhaPageProps = {
   searchParams?: Promise<{
     error?: string;
-    message?: string;
+    sent?: string;
   }>;
 };
 
 function getErrorMessage(error?: string) {
-  if (error === "missing_credentials") {
-    return "Informe e-mail e senha para acessar.";
+  if (error === "missing_email") {
+    return "Informe o e-mail cadastrado.";
   }
 
-  if (error === "invalid_credentials") {
-    return "Nao foi possivel entrar com esses dados.";
-  }
-
-  return null;
-}
-
-function getSuccessMessage(message?: string) {
-  if (message === "password_updated") {
-    return "Senha atualizada com sucesso. Entre novamente com a nova senha.";
+  if (error === "reset_failed") {
+    return "Nao foi possivel enviar o e-mail de recuperacao agora.";
   }
 
   return null;
 }
 
-export default async function LoginPage({ searchParams }: LoginPageProps) {
+export default async function RecuperarSenhaPage({
+  searchParams,
+}: RecuperarSenhaPageProps) {
   const params = await searchParams;
   const errorMessage = getErrorMessage(params?.error);
-  const successMessage = getSuccessMessage(params?.message);
+  const wasSent = params?.sent === "1";
 
   return (
     <main className="min-h-screen bg-background">
@@ -56,11 +50,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             Conselho Tutelar
           </Link>
           <Link
-            href="/"
+            href="/login"
             className="inline-flex h-8 items-center justify-center gap-2 rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
           >
             <ArrowLeft className="size-4" aria-hidden="true" />
-            Voltar ao inicio
+            Voltar ao login
           </Link>
         </div>
       </header>
@@ -68,27 +62,26 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <section className="mx-auto grid min-h-[calc(100vh-73px)] w-full max-w-5xl items-center gap-8 px-5 py-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
           <div className="mb-4 flex size-11 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
-            <LockKeyhole className="size-5" aria-hidden="true" />
+            <MailCheck className="size-5" aria-hidden="true" />
           </div>
           <h1 className="max-w-xl text-3xl font-semibold leading-tight">
-            Acesso administrativo protegido.
+            Recuperacao de senha.
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">
-            Esta area e exclusiva para conselheiros e administradores
-            autorizados. Denuncias e chamados ficam protegidos por login,
-            perfil ativo e politicas de acesso no banco.
+            Informe o e-mail do conselheiro cadastrado no Supabase Auth. O
+            sistema enviara um link seguro para definir uma nova senha.
           </p>
         </div>
 
         <Card className="rounded-lg">
           <CardHeader>
-            <CardTitle>Entrar no painel</CardTitle>
+            <CardTitle>Enviar link de recuperacao</CardTitle>
             <CardDescription>
-              Use o e-mail cadastrado no Supabase Auth.
+              O link sera enviado apenas para e-mails cadastrados.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={signInWithPasswordAction} className="space-y-4">
+            <form action={requestPasswordResetAction} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">E-mail</Label>
                 <Input
@@ -99,35 +92,20 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                />
-              </div>
               {errorMessage ? (
                 <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
                   {errorMessage}
                 </p>
               ) : null}
-              {successMessage ? (
+              {wasSent ? (
                 <p className="rounded-lg border border-primary/25 bg-primary/10 px-3 py-2 text-sm text-primary">
-                  {successMessage}
+                  Se o e-mail estiver cadastrado, o link de recuperacao chegara
+                  em instantes.
                 </p>
               ) : null}
               <Button type="submit" className="w-full">
-                Entrar
+                Enviar link
               </Button>
-              <Link
-                href="/login/recuperar-senha"
-                className="block text-center text-sm font-medium text-primary hover:underline"
-              >
-                Esqueci minha senha
-              </Link>
             </form>
           </CardContent>
         </Card>
@@ -135,4 +113,3 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     </main>
   );
 }
-
