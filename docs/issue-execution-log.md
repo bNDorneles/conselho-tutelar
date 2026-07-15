@@ -644,3 +644,23 @@ Resultado:
 - Login mostra mensagem de sucesso apos senha atualizada.
 - Helpers testados para e-mail, URL de redirect e validacao de nova senha.
 - Para producao, cadastrar a URL `/login/redefinir-senha` nos redirects permitidos do Supabase Auth.
+
+## Issue #35 - Tela de auditoria e historico da denuncia
+
+Tipo da issue: admin/security
+Modelo recomendado: gpt-5.6-sol
+Branch base: develop
+Branch da issue: issue/35-auditoria-admin-denuncia
+Comandos de verificacao executados:
+- npm.cmd run test -- lib/admin/auditoria.test.ts lib/admin/visual-status.test.ts
+- npm.cmd test
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Tela `/admin/auditoria` criada para administradores acompanharem logs do sistema.
+- Sidebar administrativa ganhou entrada `Auditoria` apenas para admins.
+- Auditoria geral ganhou filtros por acao, tipo de registro, responsavel e periodo.
+- Detalhe da denuncia passou a mostrar historico de leituras, atribuicoes e mudancas.
+- Helpers criados para traduzir acoes, entidades e metadados tecnicos em texto legivel.
+- Testes adicionados para formatacao e resumo dos eventos de auditoria.

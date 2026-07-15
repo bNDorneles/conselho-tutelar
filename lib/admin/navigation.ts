@@ -17,6 +17,7 @@ const navItems: AdminNavItem[] = [
   { label: "Medidas", href: "/admin/cadastros#medidas", adminOnly: true },
   { label: "Conselho", href: "/admin/cadastros#conselho", adminOnly: true },
   { label: "Relatorios", href: "/admin/relatorios" },
+  { label: "Auditoria", href: "/admin/auditoria", adminOnly: true },
   { label: "Area publica", href: "/" },
 ];
 
