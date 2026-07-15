@@ -247,3 +247,26 @@ Resultado:
 - Criacao de `chamados` com status inicial `aberto`.
 - Denuncia marcada como `convertida_em_chamado`.
 - Auditoria criada para chamado e mudanca de status da denuncia.
+
+## Issue #12 - Implementar tela de chamados
+
+Tipo da issue: fullstack/ui
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/12-chamados-list-detail
+Arquivos/documentos lidos:
+- ai.context.md
+- docs/github-issues.md
+- docs/superpowers/specs/2026-07-14-issue-12-chamados-list-detail-design.md
+- docs/superpowers/plans/2026-07-14-issue-12-chamados-list-detail.md
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- `/admin/chamados` criado com filtros por status, conselheiro e periodo.
+- `/admin/chamados/[id]` criado com detalhe do chamado.
+- Status de chamados alteravel com validacao de transicoes.
+- `data_fechamento` preenchida ao finalizar e limpa ao reabrir atendimento.
+- Auditoria criada para leitura e mudanca de status de chamados.
