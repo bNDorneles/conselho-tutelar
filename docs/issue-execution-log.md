@@ -471,3 +471,21 @@ Resultado:
 - Cards podem ser arrastados entre colunas permitidas.
 - Mudanca por drag-and-drop chama Server Action, registra auditoria e revalida a tela.
 - Botoes antigos de movimentacao continuam disponiveis como alternativa.
+
+## Issue #24 - Evoluir chamados, medidas e encaminhamentos
+
+Tipo da issue: fullstack/business
+Modelo recomendado: gpt-5.5
+Branch base: develop
+Branch da issue: issue/24-chamado-medidas-encaminhamentos
+Comandos de verificacao esperados:
+- npm run test
+- npm run lint
+- npm run build
+
+Resultado:
+- Tabela `chamado_medidas_protetivas` criada para separar medidas aplicadas de encaminhamentos.
+- RLS adicionada para leitura/gestao por conselheiros ativos.
+- Helpers e action criados para aplicar medida protetiva no chamado.
+- Detalhe do chamado ganhou formulario de aplicacao de medida e lista de medidas aplicadas.
+- Encaminhamentos continuam registrando relato, destino e historico do que foi feito.
