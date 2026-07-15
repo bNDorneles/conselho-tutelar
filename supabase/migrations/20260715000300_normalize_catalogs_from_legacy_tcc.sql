@@ -49,32 +49,3 @@ on conflict (nome) do update set
   descricao = excluded.descricao,
   ativo = true,
   updated_at = now();
-
-insert into public.conselho_tutelar (
-  nome,
-  municipio,
-  uf,
-  endereco,
-  telefone,
-  email,
-  horario_atendimento,
-  whatsapp,
-  facebook_url,
-  instagram_url,
-  mapa_url
-)
-values (
-  'Conselho Tutelar de Sao Borja',
-  'Sao Borja',
-  'RS',
-  'Endereco institucional a confirmar',
-  'Telefone institucional a confirmar',
-  'email-institucional-a-confirmar@example.com',
-  'Horario de atendimento a confirmar',
-  'WhatsApp institucional a confirmar',
-  'https://www.facebook.com/',
-  'https://www.instagram.com/',
-  null
-)
-on conflict do nothing;
-
