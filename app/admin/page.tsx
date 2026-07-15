@@ -97,6 +97,14 @@ export default async function AdminPage() {
             Ola, {profile.nome}. Esta area e restrita a conselheiros e
             administradores ativos.
           </p>
+          {profile.role === "admin" ? (
+            <Link
+              href="/admin/cadastros"
+              className="mt-4 inline-flex h-8 items-center justify-center rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-muted"
+            >
+              Cadastros auxiliares
+            </Link>
+          ) : null}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
