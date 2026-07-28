@@ -664,3 +664,25 @@ Resultado:
 - Detalhe da denuncia passou a mostrar historico de leituras, atribuicoes e mudancas.
 - Helpers criados para traduzir acoes, entidades e metadados tecnicos em texto legivel.
 - Testes adicionados para formatacao e resumo dos eventos de auditoria.
+
+## Issue #36 - Kanban estilo Trello com atribuicoes claras
+
+Tipo da issue: frontend/ux
+Modelo recomendado: gpt-5.6-sol
+Modelo complementar: gpt-5.5 apenas se houver ajuste em actions/status
+Branch base: develop
+Branch da issue: issue/36-kanban-trello-style
+Comandos de verificacao executados:
+- npm.cmd run test -- lib/admin/kanban-card.test.ts components/admin/denuncias-kanban.test.ts
+- npm.cmd test
+- npm.cmd run lint
+- npm.cmd run build
+
+Resultado:
+- Kanban de denuncias redesenhado como board horizontal inspirado em listas/cards do Trello.
+- Colunas ganharam largura estavel, fundo de lista, cabecalho compacto e contador destacado.
+- Cards ficaram mais compactos, com etiqueta de motivo, resumo, vitima, data, responsavel e etapa operacional.
+- Responsavel passou a aparecer com iniciais/avatar textual e fallback `Sem responsavel`.
+- Acoes de movimentacao foram recolhidas em `Acoes rapidas` para reduzir poluicao visual.
+- Feedback visual de drag-and-drop foi mantido e reforcado nas colunas.
+- Helpers testados para iniciais, resumo, vitima e responsavel do card.
